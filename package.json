@@ -1,12 +1,14 @@
 {
   "name": "susi-elevenlabs-agent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ElevenLabs Conversational AI Agent - Susi Bestandskunden Integration",
-  "main": "index.js",
+  "type": "module",
+  "main": "src/server.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "server": "node src/server.js",
     "start": "node src/server.js"
   },
   "keywords": [
@@ -14,10 +16,14 @@
     "conversational-ai",
     "agent",
     "websocket",
-    "webrtc"
+    "webrtc",
+    "voice"
   ],
   "author": "coachmichaelotto",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@elevenlabs/react": "^1.0.0",
     "react": "^18.2.0",
