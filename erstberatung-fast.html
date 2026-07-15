@@ -151,6 +151,7 @@ section{padding:72px 0;}
 .pain-desc{font-size:13px;color:var(--fg-muted);line-height:1.45;}
 .pain-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;}
 .pain-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:var(--radius-pill);background:var(--rv-gray-100);color:var(--fg-muted);}
+.pain-card.selected .pain-tag{background:rgba(255,255,255,.25);color:#fff;}
 .pain-actions{text-align:center;margin-top:32px;}
 .pain-hint{font-size:13px;color:var(--fg-muted);margin-top:12px;}
 
@@ -427,6 +428,11 @@ input:focus{outline:none;border-color:var(--rv-blue-900);box-shadow:0 0 0 3px rg
 .success-box.show{display:block;}
 .success-icon{width:56px;height:56px;border-radius:50%;background:var(--rv-green-100);color:var(--rv-green-700);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
 .success-icon svg{width:28px;height:28px;}
+.success-plan{margin-top:20px;border:1px solid var(--rv-gray-200);border-radius:var(--radius-md);overflow:hidden;text-align:left;}
+.success-plan .sp-row{display:flex;justify-content:space-between;gap:12px;padding:9px 14px;font-size:12px;border-bottom:1px solid var(--rv-gray-100);}
+.success-plan .sp-row:last-child{border-bottom:none;}
+.success-plan .sp-row span:first-child{color:var(--fg-muted);}
+.success-plan .sp-row span:last-child{font-weight:700;color:var(--rv-blue-900);text-align:right;}
 
 /* ---------- Footer ---------- */
 footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
@@ -764,6 +770,12 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
           <div class="success-icon"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
           <h3 style="color:var(--rv-blue-900);font-family:var(--font-serif)">Anfrage erhalten!</h3>
           <p class="hint" style="margin-top:8px">Vielen Dank<span id="success-name"></span>. Ihr R+V Berater meldet sich in Kürze zur Umsetzung Ihres WertschätzungsPlans.</p>
+          <div class="success-plan">
+            <div class="sp-row"><span>Unternehmen</span><span id="success-firma">—</span></div>
+            <div class="sp-row"><span>Bausteine</span><span id="success-products">—</span></div>
+            <div class="sp-row"><span>Stufe</span><span id="success-tier">—</span></div>
+            <div class="sp-row"><span>Netto-Investition</span><span id="success-cost">—</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -869,7 +881,7 @@ var PRODUCTS = {
     ]
   },
   buv: {
-    key:'buv', name:'Betriebliche Unfallversicherung', full:'Mitarbeiterkasko', iconType:'placeholder', mono:'UV',
+    key:'buv', name:'bUV', full:'Betriebliche Unfallversicherung', iconType:'placeholder', mono:'UV',
     tagline:'Doppelte Leistung: Betriebskostenersatz an Sie als Arbeitgeber + persönlicher Unfallschutz für jeden Mitarbeitenden.',
     nutzen:'Ihr Nutzen als Unternehmer: Bei unfallbedingtem Ausfall zahlt die Kasko zweiseitig — erstens erhalten Sie als Arbeitgeber Betriebskostenersatz für Vertretung und Produktivitätsausfall (bis 13.000 €); zweitens erhalten die betroffenen Mitarbeitenden bzw. Hinterbliebenen persönlichen Invaliditäts- und Unfallschutz. Auch bei Freizeitunfällen, wo die Berufsgenossenschaft nicht leistet.',
     what:'Ein Gruppenvertrag für die gesamte Belegschaft — weltweit, rund um die Uhr, auch in der Freizeit, ohne Gesundheitsprüfung. Ein Vertrag, zwei Leistungsempfänger.',
@@ -1639,10 +1651,22 @@ function updateHerz(){
 
 function submitClosing(evt){
   evt.preventDefault();
-  var name = document.getElementById('f-ansprech').value.trim();
+  var name   = document.getElementById('f-ansprech').value.trim();
+  var firma  = document.getElementById('f-firma').value.trim();
+  var t      = TIERS[selectedTier];
+  var prods  = Object.keys(PRODUCTS).filter(function(k){ return planProducts.has(k); })
+                 .map(function(k){ return PRODUCTS[k].name; }).join(' + ');
+  var costStr = window._investPerMAnetto
+    ? window._investPerMAnetto.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' € netto/MA/Mo.'
+    : '—';
+  var set = function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v||'—'; };
+  set('success-firma',    firma);
+  set('success-products', prods || '—');
+  set('success-tier',     t.name);
+  set('success-cost',     costStr);
   document.getElementById('form-view').style.display = 'none';
   document.getElementById('success-view').classList.add('show');
-  document.getElementById('success-name').textContent = name ? ', ' + name.split(' ')[0] : '';
+  set('success-name', name ? ', '+name.split(' ')[0] : '');
   setStep(3);
 }
 
@@ -1654,6 +1678,28 @@ selectTier('premium');
 updatePlanChip();
 updateSummary();
 updateHerz();
+
+/* ------ Scroll-driven step progress (only advances, never regresses) ------ */
+(function(){
+  var currentStep = 1;
+  var sections = [
+    { el: document.getElementById('pain-points'), step: 1 },
+    { el: document.getElementById('produkte'),    step: 2 },
+    { el: document.getElementById('abschluss'),   step: 3 }
+  ].filter(function(s){ return s.el; });
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var found = sections.find(function(s){ return s.el === e.target; });
+      if(found && found.step > currentStep){
+        currentStep = found.step;
+        /* only soft-advance (done marks) when analysis already ran */
+        setStep(currentStep, analysed);
+      }
+    });
+  }, { threshold: 0.15 });
+  sections.forEach(function(s){ io.observe(s.el); });
+})();
 </script>
 </body>
 </html>
