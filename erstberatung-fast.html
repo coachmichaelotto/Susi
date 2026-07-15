@@ -396,11 +396,20 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 @media (max-width:760px){.close-wrap{grid-template-columns:1fr;}}
 .close-summary{background:var(--rv-blue-900);color:#fff;padding:32px 28px;}
 .close-summary h3{font-family:var(--font-serif);font-size:22px;margin-bottom:14px;}
-.summary-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.summary-list li{display:flex;align-items:center;gap:10px;font-size:13px;background:rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:9px 12px;}
+.summary-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.summary-list li{display:flex;align-items:center;gap:10px;font-size:13px;border-radius:var(--radius-sm);padding:9px 12px;}
 .summary-list li svg{flex-shrink:0;}
-.summary-list li span.txt{min-width:0;}
 .summary-empty{font-size:13px;color:rgba(255,255,255,.65);}
+/* Tier badge row */
+.summary-tier{background:rgba(167,213,76,.15);border:1px solid rgba(167,213,76,.35);}
+.summary-tier-badge{background:var(--rv-green-400);color:var(--rv-blue-900);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap;}
+/* Product rows */
+.summary-prod{background:rgba(255,255,255,.07);}
+/* Cost rows */
+.summary-cost{background:rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.8);}
+.summary-cost .tnum{font-size:13px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;}
+.summary-cost--total{background:rgba(167,213,76,.18);border-top:1px solid rgba(167,213,76,.3);font-weight:600;color:#fff;}
+.summary-cost--total .tnum{color:var(--rv-green-400);font-size:15px;}
 .summary-note{font-size:12px;color:rgba(255,255,255,.6);line-height:1.5;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;}
 .close-form{padding:32px 28px;}
 .close-form h3{font-family:var(--font-serif);font-size:20px;color:var(--rv-blue-900);margin-bottom:4px;}
@@ -741,7 +750,7 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
               <div><label for="f-telefon">Telefon</label><input type="tel" id="f-telefon" required placeholder="0151 23456789"></div>
             </div>
             <div class="form-row full">
-              <div><label for="f-mitarbeiter">Anzahl Mitarbeitende (optional)</label><input type="number" id="f-mitarbeiter" placeholder="z. B. 25"></div>
+              <div><label for="f-mitarbeiter">Anzahl Mitarbeitende (optional)</label><input type="number" id="f-mitarbeiter" placeholder="z. B. 25" oninput="this.dataset.touched='1'"></div>
             </div>
             <label class="consent"><input type="checkbox" required> Ich möchte den oben zusammengestellten WertschätzungsPlan verbindlich anfragen und von R+V zur Umsetzung kontaktiert werden.</label>
             <button type="submit" class="rv-btn rv-btn--accent rv-btn--block">
@@ -1468,16 +1477,46 @@ function updateSummary(){
     list.innerHTML = '<li class="summary-empty">Noch keine Bausteine ausgewählt — wählen Sie oben passende Produkte für Ihren Plan.</li>';
     return;
   }
-  list.innerHTML = Array.from(planProducts).map(function(k){
+  var t = TIERS[selectedTier];
+  var hasGF = planProducts.has('gf');
+  var baseKeys = Object.keys(PRODUCTS).filter(function(k){ return planProducts.has(k) && k !== 'gf'; });
+  var fmtNet = function(v){ return v.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; };
+  var checkSvg = '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;flex-shrink:0;color:var(--rv-green-400)"><path d="M20 6L9 17l-5-5"/></svg>';
+
+  var rows = [];
+  /* Tier row */
+  rows.push('<li class="summary-tier">'+
+    '<span class="summary-tier-badge">'+t.name+'</span>'+
+    '<span>Stufe <strong>'+t.name+'</strong> &mdash; '+t.budget+' '+t.budgetLabel+'</span>'+
+  '</li>');
+  /* Product rows */
+  baseKeys.forEach(function(k){
     var p = PRODUCTS[k];
-    return '<li><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;color:var(--rv-green-400)"><path d="M20 6L9 17l-5-5"/></svg> <span class="txt"><strong>'+p.name+'</strong>&nbsp;— '+p.full+'</span></li>';
-  }).join('');
+    rows.push('<li class="summary-prod">'+checkSvg+' <span><strong>'+p.name+'</strong>&thinsp;&mdash; '+p.full+'</span></li>');
+  });
+  if(hasGF){
+    rows.push('<li class="summary-prod">'+checkSvg+' <span><strong>GF-Versorgung</strong>&thinsp;&mdash; Konditionen werden individuell mit Ihnen abgestimmt</span></li>');
+  }
+  /* Cost rows */
+  if(window._investPerMAnetto){
+    rows.push('<li class="summary-cost"><span>Netto-Investition'+(hasGF?' (ohne GF, individuell)':'')+'</span><span class="tnum">'+fmtNet(window._investPerMAnetto)+'&thinsp;/&thinsp;MA&thinsp;/&thinsp;Mo.</span></li>');
+  }
+  if(window._investJahrNetto && window._investMA > 0){
+    rows.push('<li class="summary-cost summary-cost--total"><span>Gesamt netto/Jahr ('+window._investMA+' MA)</span><span class="tnum">'+fmtE(window._investJahrNetto)+'</span></li>');
+  }
+  list.innerHTML = rows.join('');
 }
 
 function updateMobileCta(){
   var status = document.getElementById('mobile-status');
   if(planProducts.size > 0){
-    status.innerHTML = '<strong>'+planProducts.size+' Baustein'+(planProducts.size>1?'e':'')+'</strong> ausgewählt';
+    var costStr = '';
+    if(window._investPerMAnetto){
+      costStr = ' &middot; <span style="color:var(--rv-green-400)">'+
+        window._investPerMAnetto.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+
+        '&thinsp;€ netto/MA/Mo.</span>';
+    }
+    status.innerHTML = '<strong>'+planProducts.size+' Baustein'+(planProducts.size>1?'e':'')+'</strong>'+costStr;
     setStep(3, true);
   } else if(analysed){
     status.textContent = 'Bausteine für Ihren Plan übernehmen';
@@ -1528,7 +1567,7 @@ function selectTier(key){
   selectedTier = key;
   Object.keys(TIERS).forEach(function(k){ document.getElementById('tier-'+k).classList.toggle('selected', k===key); });
   document.getElementById('herz-tier-name').textContent = TIERS[key].name;
-  updateInvest();
+  updateInvest(); /* updateInvest calls updateSummary + updateMobileCta */
 }
 function suggestTierFromPlan(){
   var n = planProducts.size;
@@ -1564,6 +1603,15 @@ function updateInvest(){
     set('invest-jahr-netto', '–');
   }
   updateHerz();
+  /* expose for mobile CTA + summary */
+  window._investPerMAnetto = perMAnetto;
+  window._investJahrNetto  = ma > 0 ? (perMA * 12 * ma) * (1 - TAX_RATE) : 0;
+  window._investMA         = ma;
+  /* pre-fill form MA field if user hasn't touched it */
+  var fMA = document.getElementById('f-mitarbeiter');
+  if(fMA && !fMA.dataset.touched && ma > 0) fMA.value = ma;
+  updateSummary();
+  updateMobileCta();
 }
 
 /* ---------- Herz: Business Case ---------- */
