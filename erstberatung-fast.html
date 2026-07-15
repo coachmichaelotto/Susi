@@ -179,6 +179,17 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .sq-card .sq-val{font-weight:900;font-size:32px;line-height:1;color:var(--rv-green-400);letter-spacing:-.01em;}
 .sq-card .sq-note{font-size:12px;color:rgba(255,255,255,.65);margin-top:8px;line-height:1.4;}
 
+/* ---------- GF-Gehalt Panel ---------- */
+.gf-gehalt-panel{max-width:960px;margin:16px auto 0;background:#fff;border:1.5px solid rgba(230,0,0,.22);border-radius:var(--radius-lg);padding:22px 26px 20px;animation:fadeUp .35s ease both;}
+.gf-panel-bar{display:flex;align-items:center;gap:10px;background:var(--rv-red-600);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;color:#fff;font-size:13px;font-weight:700;}
+.gf-panel-bar svg{flex-shrink:0;}
+.gf-live{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+@media (max-width:620px){.gf-live{grid-template-columns:1fr 1fr;}}
+@media (max-width:400px){.gf-live{grid-template-columns:1fr;}}
+.glc{padding:12px 14px;border-radius:var(--radius-sm);text-align:center;}
+.glc-val{font-weight:900;font-size:22px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;}
+.glc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;line-height:1.35;}
+
 /* ---------- Team-Analyse (optional) ---------- */
 .team-toggle-wrap{max-width:960px;margin:26px auto 0;text-align:center;}
 .team-toggle-btn{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1.5px dashed var(--rv-gray-400);border-radius:var(--radius-pill);padding:12px 22px;font-weight:700;font-size:14px;color:var(--rv-blue-900);}
@@ -492,6 +503,33 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
       </div>
       <p class="kz-sub">Vier Regler, ein realistisches Bild: So rechnen wir live vor, was Fehlzeiten, Fluktuation und die Versorgungslücke Ihr Unternehmen tatsächlich kosten.</p>
       <div class="slider-grid" id="slider-grid"></div>
+    </div>
+
+    <!-- GF-Schieberegler: erscheint nur wenn GF-Vorsorge Pain gewählt -->
+    <div class="gf-gehalt-panel" id="gf-gehalt-panel" style="display:none">
+      <div class="gf-panel-bar">
+        <svg class="icon" viewBox="0 0 24 24" style="width:1em;height:1em"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        GF-Modus: Ihr persönlicher Steuerschaden in Echtzeit
+      </div>
+      <div class="slider-item" style="padding-bottom:0">
+        <label>Ihr GF-Jahresgehalt (Modellrechnung) <span class="val" id="gfgehalt-val">120.000 €</span></label>
+        <input type="range" id="slider-gfgehalt" min="50000" max="500000" step="10000" value="120000" oninput="onGFSliderInput()">
+        <div class="slider-scale"><span>50.000 €</span><span>500.000 €</span></div>
+      </div>
+      <div class="gf-live">
+        <div class="glc" style="background:#fef2f2">
+          <div class="glc-val" id="gf-live-brutto" style="color:var(--rv-blue-900)">120.000 €</div>
+          <div class="glc-label" style="color:var(--fg-muted)">GF-Jahresgehalt</div>
+        </div>
+        <div class="glc" style="background:rgba(230,0,0,.08)">
+          <div class="glc-val" id="gf-live-netto" style="color:var(--rv-red-600)">61.200 €</div>
+          <div class="glc-label" style="color:var(--rv-red-600)">Netto nach Kaskadensteuer</div>
+        </div>
+        <div class="glc" style="background:var(--rv-blue-900)">
+          <div class="glc-val" id="gf-live-verlust" style="color:var(--rv-green-400)">58.800 €</div>
+          <div class="glc-label" style="color:rgba(255,255,255,.75)">Steuerverlust / Jahr</div>
+        </div>
+      </div>
     </div>
 
     <div class="team-toggle-wrap">
@@ -823,16 +861,16 @@ var PRODUCTS = {
   },
   buv: {
     key:'buv', name:'Betriebliche Unfallversicherung', full:'Mitarbeiterkasko', iconType:'placeholder', mono:'UV',
-    tagline:'Bis zu 13.000 € zahlt die Kasko direkt an Sie, wenn eine Schlüsselkraft ausfällt.',
-    nutzen:'Ihr Nutzen als Unternehmer: Bei unfallbedingtem Ausfall zahlt die Kasko nicht an den Mitarbeitenden, sondern direkt an Sie — als Ersatz für Lohnkosten der Vertretung. Auch bei Freizeitunfällen, wo die Berufsgenossenschaft nicht leistet.',
-    what:'Ein Gruppenvertrag für die gesamte Belegschaft — weltweit, rund um die Uhr, auch in der Freizeit, ohne Gesundheitsprüfung.',
-    ag:['Schützt Betriebsablauf bei Ausfall von Schlüsselkräften','Zahlt direkt an Sie als Arbeitgeber, nicht an den Mitarbeitenden','Minimaler Verwaltungsaufwand'],
-    ma:['Schutz auch in der Freizeit, weltweit','Kein Gesundheitscheck nötig','Zusätzliche Absicherung ohne Eigenbeitrag'],
-    tax:'Beiträge sind für den Arbeitgeber i.&nbsp;d.&nbsp;R. als Betriebsausgabe abzugsfähig; einfache Gruppenkalkulation.',
+    tagline:'Doppelte Leistung: Betriebskostenersatz an Sie als Arbeitgeber + persönlicher Unfallschutz für jeden Mitarbeitenden.',
+    nutzen:'Ihr Nutzen als Unternehmer: Bei unfallbedingtem Ausfall zahlt die Kasko zweiseitig — erstens erhalten Sie als Arbeitgeber Betriebskostenersatz für Vertretung und Produktivitätsausfall (bis 13.000 €); zweitens erhalten die betroffenen Mitarbeitenden bzw. Hinterbliebenen persönlichen Invaliditäts- und Unfallschutz. Auch bei Freizeitunfällen, wo die Berufsgenossenschaft nicht leistet.',
+    what:'Ein Gruppenvertrag für die gesamte Belegschaft — weltweit, rund um die Uhr, auch in der Freizeit, ohne Gesundheitsprüfung. Ein Vertrag, zwei Leistungsempfänger.',
+    ag:['Betriebskostenersatz direkt an Sie (Vertretung, Lohnfortzahlung) bei Ausfall','Gruppenvertrag für alle — kein Einzelantrag, kein Verwaltungsaufwand','Beiträge pauschal versteuerbar, kein Nettoabzug beim Mitarbeitenden'],
+    ma:['Persönlicher Invalididäts- und Unfallschutz, auch in der Freizeit','Leistung an Mitarbeitende/Hinterbliebene bei Invalidität oder Todesfall','Kein Eigenbeitrag, keine Gesundheitsprüfung nötig'],
+    tax:'Beiträge sind für den Arbeitgeber i.&nbsp;d.&nbsp;R. als Betriebsausgabe abzugsfähig; pauschale Versteuerung möglich — kein Nettoabzug beim Mitarbeitenden.',
     detailStats:[
-      {val:'13.000 €', label:'maximale Leistung an Sie als Arbeitgeber je Schadenfall'},
+      {val:'bis 13.000 €', label:'Betriebskostenersatz an Sie als Arbeitgeber je Schadenfall (Modell)'},
       {val:'72 %', label:'aller Unfälle passieren in der Freizeit — dort zahlt die BG nicht'},
-      {val:'alle 4 Sek.', label:'passiert in Deutschland ein Unfall'}
+      {val:'2 Empfänger', label:'Arbeitgeber (Betriebskosten) + Mitarbeitende (Invaliditätsleistung)'}
     ]
   },
   gf: {
@@ -912,9 +950,27 @@ function togglePain(id){
   var el = document.getElementById('pain-'+id);
   if(selectedPains.has(id)){ selectedPains.delete(id); el.classList.remove('selected'); }
   else { selectedPains.add(id); el.classList.add('selected'); }
+  // GF-Panel ein-/ausblenden
+  var gfPanel = document.getElementById('gf-gehalt-panel');
+  if(gfPanel) gfPanel.style.display = selectedPains.has('gf-vorsorge') ? 'block' : 'none';
   document.getElementById('pain-hint').textContent = selectedPains.size
     ? selectedPains.size + ' Herausforderung' + (selectedPains.size>1?'en':'') + ' ausgewählt.'
     : 'Wählen Sie mindestens einen Punkt aus (oder werten Sie die Team-Analyse aus).';
+}
+
+function getGFJahr(){
+  var el = document.getElementById('slider-gfgehalt');
+  return el ? parseInt(el.value, 10) : 120000;
+}
+function onGFSliderInput(){
+  var v = getGFJahr();
+  document.getElementById('gfgehalt-val').textContent = v.toLocaleString('de-DE') + ' €';
+  var netto = Math.round(v * 0.51);
+  var verlust = Math.round(v * 0.49);
+  document.getElementById('gf-live-brutto').textContent = fmtE(v);
+  document.getElementById('gf-live-netto').textContent = fmtE(netto);
+  document.getElementById('gf-live-verlust').textContent = fmtE(verlust);
+  if(analysed) renderDiagnosis();
 }
 
 function renderSliders(){
@@ -1019,8 +1075,8 @@ function runTeamAnalysis(){
         ? 'Zusatzleistungen geben bei Bewerbern kaum den Ausschlag — das ist eine strategische Chance: Sie können heute ein klares Arbeitgeberprofil aufbauen, bevor Ihr Wettbewerb es tut.'
         : 'Benefits spielen bei Zusagen eine Rolle — strukturierte Angebote sichern Ihre Arbeitgebermarke nachhaltig.' });
     } else if(q.id === 'gf-gfversorgung'){
-      var gfJahrVerlust = d.brutto > 0 ? Math.round(d.brutto * 12 * 0.49) : null;
-      var gfHinw = gfJahrVerlust ? ' Bei Ihrem Gehaltsniveau (Schritt 1) verlieren Sie ca. <strong style="color:var(--rv-red-600)">' + fmtE(gfJahrVerlust) + ' / Jahr</strong> durch Kaskadenbesteuerung — Euros, die vollständig in Ihre Versorgung fließen könnten.' : '';
+      var gfJahrVerlust = Math.round(getGFJahr() * 0.49);
+      var gfHinw = ' Bei Ihrem GF-Jahresgehalt verlieren Sie ca. <strong style="color:var(--rv-red-600)">' + fmtE(gfJahrVerlust) + ' / Jahr</strong> durch Kaskadenbesteuerung — Euros, die vollständig in Ihre Versorgung fließen könnten.';
       handlungen.push({ sev:sev, text: (sev==='hoch'
         ? 'Ihre eigene Versorgung als Geschäftsführer ist kaum vorhanden — der größte einzelne Hebel, den Sie sofort adressieren können.'
         : 'Ihre GF-Versorgung ist ausbaufähig — strukturierter Aufbau spart erhebliche Steuerlasten.') + gfHinw });
@@ -1079,9 +1135,9 @@ function renderDiagnosis(){
       '<strong style="color:var(--rv-green-400)">' + fmtE(total) + ' pro Jahr</strong> — ' +
       'allein durch Fehlzeiten und Fluktuation.';
     if(hasPainGF){
-      var gfJahrVerlust = Math.round(d.brutto * 12 * 0.49);
+      var gfJahrVerlustNarr = Math.round(getGFJahr() * 0.49);
       text += ' Hinzu kommen als Geschäftsführer ca. <strong style="color:#ffb3b3">' +
-        fmtE(gfJahrVerlust) + ' verlorene Altersvorsorge / Jahr</strong> durch Kaskadenbesteuerung.';
+        fmtE(gfJahrVerlustNarr) + ' verlorene Altersvorsorge / Jahr</strong> durch Kaskadenbesteuerung.';
     }
   } else if(numPains > 0){
     text = 'Sie haben <strong>' + numPains + ' Herausforderung' + (numPains > 1 ? 'en' : '') +
@@ -1105,12 +1161,12 @@ function renderDiagnosis(){
       text: 'Rentenlücke je betroffenem Mitarbeitenden: <strong>' + fmtE(d.luecke) +
         ' / Monat</strong>. Ohne bAV ein unterschätztes Risiko für Ihre Arbeitgeberattraktivität — und ein Treueproblem.' });
   }
-  if(hasPainGF && d.brutto > 0){
-    var gfJahrVerlustItem = Math.round(d.brutto * 12 * 0.49);
+  if(hasPainGF){
+    var gfJahrVerlustItem = Math.round(getGFJahr() * 0.49);
     items.push({ sev:'kritisch',
       text: 'Als Geschäftsführer zahlen Sie bei privater Gewinnentnahme ca. 49 % Kaskadensteuer. ' +
-        'Auf Basis des eingestellten Bruttogehalts: ca. <strong style="color:#ffb3b3">' +
-        fmtE(gfJahrVerlustItem) + ' verlorene Altersvorsorge / Jahr</strong> — betrieblich optimierbar.' });
+        'Bei Ihrem eingestellten GF-Jahresgehalt: ca. <strong style="color:#ffb3b3">' +
+        fmtE(gfJahrVerlustItem) + ' verlorene Altersvorsorge / Jahr</strong> — betrieblich vollständig optimierbar.' });
   }
 
   var diagBox = document.getElementById('ai-diagnosis');
@@ -1236,7 +1292,18 @@ function openProductDetail(key){
   document.getElementById('modal-icon').innerHTML = renderIcon(p);
   document.getElementById('modal-title').textContent = p.name + ' — ' + p.full;
   document.getElementById('modal-tagline').textContent = p.tagline;
-  var statsHtml = '<div class="modal-stats">' + p.detailStats.map(function(s){
+  // GF: use live slider value for stats
+  var detailStats = p.detailStats;
+  if(key === 'gf'){
+    var gfJ = getGFJahr();
+    var gfLoss = Math.round(gfJ * 0.49);
+    detailStats = [
+      {val: fmtE(gfLoss), label:'verlorene Altersvorsorge / Jahr — bei ' + fmtE(gfJ) + ' GF-Jahresgehalt und Kaskadenbesteuerung (Modellrechnung)'},
+      {val:'≤ 1.200 €', label:'gesetzliche Rente / Monat für typische GGF ohne Pflichtversicherung — oft schlicht: 0 €'},
+      {val:'100 %', label:'Betriebsausgabenabzug über Unterstützungskasse (§ 4d EStG) — kein Steuerverlust mehr'}
+    ];
+  }
+  var statsHtml = '<div class="modal-stats">' + detailStats.map(function(s){
     return '<div class="modal-stat"><div class="ms-val">'+s.val+'</div><div class="ms-label">'+s.label+'</div></div>';
   }).join('') + '</div>';
   var nutzenHtml = '<div class="nutzen-box" style="margin-bottom:16px"><strong>Was habe ich als Unternehmer davon?</strong><br>'+p.nutzen+'</div>';
@@ -1275,15 +1342,25 @@ function renderProductExample(key){
       '</div>';
   }
   if(key === 'buv'){
-    return '<div class="modal-narrative">Drei typische Fälle — alle in der Freizeit, wo die Berufsgenossenschaft an Ihren Betrieb 0 € zahlt.</div>' +
+    return '<div class="modal-narrative">Drei typische Fälle — alle in der Freizeit, wo die Berufsgenossenschaft an Ihren Betrieb <strong>0 €</strong> zahlt. Die Kasko zahlt an beide Seiten.</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">' +
+        '<div style="background:var(--rv-gray-100);border-radius:var(--radius-sm);padding:12px 14px">' +
+          '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--rv-blue-900);margin-bottom:6px">An Sie als Arbeitgeber</div>' +
+          '<div style="font-size:13px;color:var(--rv-blue-900);line-height:1.5">Betriebskostenersatz für Vertretungskräfte, Lohnfortzahlung, Produktivitätsausfall — direkt an Sie ausgezahlt.</div>' +
+        '</div>' +
+        '<div style="background:var(--rv-green-100);border-radius:var(--radius-sm);padding:12px 14px">' +
+          '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--rv-green-700);margin-bottom:6px">An Mitarbeitende / Hinterbliebene</div>' +
+          '<div style="font-size:13px;color:var(--rv-blue-900);line-height:1.5">Persönliche Invaliditäts- und Unfallleistung, Todesfallschutz — an die betroffenen Mitarbeitenden oder Angehörigen.</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="example-grid">' +
-        '<div class="example-card"><div class="ex-hdr">Kreuzbandriss beim Fußball</div><div class="ex-body">Zerspanungsmechaniker fällt 4 Monate aus. Ersatzkraft über Personaldienstleister.</div><div class="ex-result">9.000 €<span>zahlt die Kasko an Sie</span></div></div>' +
-        '<div class="example-card"><div class="ex-hdr">Handgelenksbruch beim Radfahren</div><div class="ex-body">Büroleiterin fällt 2 Monate aus, mitten im Jahresabschluss. Interimskraft überbrückt.</div><div class="ex-result">5.000 €<span>zahlt die Kasko an Sie</span></div></div>' +
-        '<div class="example-card" style="border-color:var(--rv-green-700)"><div class="ex-hdr" style="background:var(--rv-green-100);color:var(--rv-green-700)">Motorradunfall im Urlaub</div><div class="ex-body">Servicetechniker fällt 8 Monate aus. Die Kasko leistet die vollen 6 Monate — Höchstleistung.</div><div class="ex-result">13.000 €<span>zahlt die Kasko an Sie</span></div></div>' +
+        '<div class="example-card"><div class="ex-hdr">Kreuzbandriss beim Fußball</div><div class="ex-body">Zerspanungsmechaniker fällt 4 Monate aus. Ersatzkraft über Personaldienstleister. <em>Mitarbeiter erhält zusätzlich Invaliditätsleistung.</em></div><div class="ex-result">9.000 €<span>an Sie (Betriebskosten)</span></div></div>' +
+        '<div class="example-card"><div class="ex-hdr">Handgelenksbruch beim Radfahren</div><div class="ex-body">Büroleiterin fällt 2 Monate aus, mitten im Jahresabschluss. <em>Mitarbeiterin erhält Krankenhaustagesgeld + Genesung.</em></div><div class="ex-result">5.000 €<span>an Sie (Betriebskosten)</span></div></div>' +
+        '<div class="example-card" style="border-color:var(--rv-green-700)"><div class="ex-hdr" style="background:var(--rv-green-100);color:var(--rv-green-700)">Motorradunfall im Urlaub</div><div class="ex-body">Servicetechniker, bleibende Invalidität (30 %). <em>MA erhält Invaliditätskapital + laufende Rente. Betrieb erhält Maximalleistung.</em></div><div class="ex-result">13.000 €<span>an Sie + Invaliditätsleistung an MA</span></div></div>' +
       '</div>';
   }
   if(key === 'gf'){
-    var gfJahr = 120000;
+    var gfJahr = getGFJahr();
     var gfNetto = Math.round(gfJahr * 0.51);
     var gfVerlust = Math.round(gfJahr * 0.49);
     return '<div style="background:var(--rv-red-600);color:#fff;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:18px;line-height:1.55">' +
