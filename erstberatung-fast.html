@@ -123,68 +123,73 @@ header.site{position:sticky;top:0;z-index:50;background:var(--rv-blue-900);borde
 .hero-right img{width:52%;max-width:230px;object-fit:contain;}
 .hero-right .tag{position:absolute;top:20px;right:20px;background:var(--rv-blue-900);color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;padding:5px 11px;border-radius:var(--radius-pill);text-transform:uppercase;}
 
-/* ===== Maschinen-Metapher (Infografik) ===== */
+/* ===== Maschinen-Metapher (Motor als Herz) ===== */
 @keyframes spin-gear{to{transform:rotate(360deg);}}
-.metapher-section{background:#0b1929;padding:72px 24px 64px;overflow:hidden;}
+@keyframes spin-gear-rev{to{transform:rotate(-360deg);}}
+@keyframes pulse-glow{0%,100%{opacity:.35;}50%{opacity:.75;}}
+.metapher-section{background:#0b1929;padding:72px 24px 72px;overflow:hidden;position:relative;}
+.metapher-section::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(167,213,76,.05),transparent 55%);pointer-events:none;}
 .metapher-section .rv-section-title{text-align:center;color:#fff;}
-.metapher-section .rv-section-lead{text-align:center;max-width:680px;margin:0 auto 48px;color:rgba(255,255,255,.72);}
+.metapher-section .rv-section-lead{text-align:center;max-width:720px;margin:0 auto 40px;color:rgba(255,255,255,.72);font-size:17px;}
 .metapher-section .rv-eyebrow{color:var(--rv-green-400);}
-/* Infographic grid wrapper */
-.metapher-infographic{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.07);border-radius:16px;overflow:hidden;}
-/* Column header row */
-.mi-header{display:grid;grid-template-columns:1fr 72px 1fr;gap:2px;background:rgba(255,255,255,.07);}
-.mi-col-hdr{padding:22px 24px;display:flex;align-items:center;gap:14px;}
-.mi-col-hdr.machine{background:#1c3145;}
-.mi-col-hdr.arrow-hdr{background:#0f2236;justify-content:center;}
-.mi-col-hdr.people{background:#001957;}
-.mi-col-hdr .hdr-icon-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.mi-col-hdr.machine .hdr-icon-circle{background:rgba(255,255,255,.1);}
-.mi-col-hdr.people .hdr-icon-circle{background:rgba(167,213,76,.18);}
-.mi-col-hdr .col-label{font-family:var(--font-serif);font-size:15px;font-weight:700;color:#fff;line-height:1.25;}
-.mi-col-hdr .col-sublabel{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.04em;margin-top:3px;}
-.mi-gear-icon{animation:spin-gear 12s linear infinite;}
-@media (prefers-reduced-motion:reduce){.mi-gear-icon{animation:none;}}
-/* Data rows */
-.mi-row{display:grid;grid-template-columns:1fr 72px 1fr;gap:2px;background:rgba(255,255,255,.07);
-  opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease;}
-.metapher-infographic.visible .mi-row:nth-child(2){opacity:1;transform:none;transition-delay:.08s;}
-.metapher-infographic.visible .mi-row:nth-child(3){opacity:1;transform:none;transition-delay:.26s;}
-.metapher-infographic.visible .mi-row:nth-child(4){opacity:1;transform:none;transition-delay:.44s;}
-.metapher-infographic.visible .mi-row:nth-child(5){opacity:1;transform:none;transition-delay:.62s;}
-@media (prefers-reduced-motion:reduce){
-  .mi-row{transition:none;opacity:1;transform:none;}
-  .mi-arrow-icon{transition:none;opacity:1;transform:scale(1)!important;}
-}
-/* Cells */
-.mi-machine-cell{background:#1c3145;padding:20px 22px;display:flex;align-items:flex-start;gap:14px;}
-.mi-people-cell{background:#001957;padding:20px 22px;display:flex;align-items:flex-start;gap:14px;}
-.mi-arrow-cell{background:#0f2236;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 4px;}
-/* Row icon circles */
-.mi-icon-wrap{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.mi-machine-cell .mi-icon-wrap{background:rgba(255,255,255,.1);}
-.mi-people-cell .mi-icon-wrap{background:rgba(167,213,76,.2);}
-/* Cell text */
-.mi-tag{display:inline-flex;align-items:center;background:var(--rv-green-400);color:#001957;font-size:9px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:3px;margin-bottom:5px;white-space:nowrap;}
-.mi-cell-title{font-size:13px;font-weight:700;color:#fff;display:block;margin-bottom:4px;line-height:1.3;}
-.mi-cell-desc{font-size:11px;color:rgba(255,255,255,.58);line-height:1.55;display:block;}
-/* Arrow connector */
-.mi-arrow-label{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.3);writing-mode:vertical-rl;transform:rotate(180deg);}
-.mi-arrow-icon{color:var(--rv-green-400);display:flex;align-items:center;justify-content:center;
-  opacity:0;transform:translateX(-6px) scale(.8);transition:opacity .35s ease,transform .35s ease;}
-.metapher-infographic.visible .mi-arrow-icon{opacity:1;transform:none;}
-.metapher-infographic.visible .mi-row:nth-child(2) .mi-arrow-icon{transition-delay:.22s;}
-.metapher-infographic.visible .mi-row:nth-child(3) .mi-arrow-icon{transition-delay:.40s;}
-.metapher-infographic.visible .mi-row:nth-child(4) .mi-arrow-icon{transition-delay:.58s;}
-.metapher-infographic.visible .mi-row:nth-child(5) .mi-arrow-icon{transition-delay:.76s;}
+/* Motor-Hero (zentrale Maschine) */
+.motor-hero{position:relative;max-width:820px;margin:0 auto 56px;display:flex;flex-direction:column;align-items:center;padding:32px 0 24px;}
+.motor-stage{position:relative;width:100%;max-width:640px;display:flex;justify-content:center;align-items:center;}
+.motor-svg{width:100%;max-width:520px;height:auto;filter:drop-shadow(0 20px 40px rgba(0,0,0,.4));}
+.motor-gear-large{transform-origin:187px 178px;animation:spin-gear 14s linear infinite;}
+.motor-gear-small{transform-origin:333px 208px;animation:spin-gear-rev 9s linear infinite;}
+.motor-pulse{animation:pulse-glow 2.4s ease-in-out infinite;}
+@media (prefers-reduced-motion:reduce){.motor-gear-large,.motor-gear-small,.motor-pulse{animation:none;}}
+.motor-label{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-serif);font-style:italic;font-weight:700;font-size:15px;color:#fff;letter-spacing:.02em;text-align:center;pointer-events:none;text-shadow:0 2px 4px rgba(0,0,0,.6);}
+.motor-label small{display:block;font-family:var(--font-body);font-style:normal;font-size:9px;letter-spacing:.16em;color:var(--rv-green-400);font-weight:700;margin-top:3px;}
+/* Kosten-Badges am Motor */
+.motor-cost{position:absolute;background:linear-gradient(135deg,#001957,#00306b);color:#fff;border:1.5px solid rgba(167,213,76,.4);border-radius:14px;padding:14px 18px;box-shadow:0 12px 30px rgba(0,0,0,.4);z-index:2;max-width:220px;}
+.motor-cost::before{content:"";position:absolute;width:10px;height:10px;background:var(--rv-green-400);border-radius:50%;box-shadow:0 0 0 4px rgba(167,213,76,.25);}
+.motor-cost.left{top:14%;left:0;transform:translateX(-6%);}
+.motor-cost.left::before{right:-24px;top:50%;margin-top:-5px;}
+.motor-cost.right{bottom:14%;right:0;transform:translateX(6%);}
+.motor-cost.right::before{left:-24px;top:50%;margin-top:-5px;}
+.motor-cost .cost-num{font-family:var(--font-serif);font-weight:700;font-size:26px;color:var(--rv-green-400);line-height:1;display:block;}
+.motor-cost .cost-label{font-size:11px;line-height:1.45;color:rgba(255,255,255,.85);margin-top:4px;display:block;}
+.motor-cost .cost-sub{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:6px;display:block;}
+/* Verbindungsleitungen zu den Analogie-Karten (nur Desktop) */
+.motor-hero .motor-links{position:absolute;inset:0;pointer-events:none;display:none;}
+/* 2x2 Analogie-Grid unter dem Motor */
+.analog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:1000px;margin:0 auto;position:relative;}
+.analog-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px 24px 22px;
+  opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.metapher-wrap.visible .analog-card:nth-child(1){opacity:1;transform:none;transition-delay:.08s;}
+.metapher-wrap.visible .analog-card:nth-child(2){opacity:1;transform:none;transition-delay:.24s;}
+.metapher-wrap.visible .analog-card:nth-child(3){opacity:1;transform:none;transition-delay:.40s;}
+.metapher-wrap.visible .analog-card:nth-child(4){opacity:1;transform:none;transition-delay:.56s;}
+@media (prefers-reduced-motion:reduce){.analog-card{transition:none;opacity:1;transform:none;}}
+.ac-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:rgba(167,213,76,.15);color:var(--rv-green-400);border-radius:50%;font-family:var(--font-serif);font-weight:700;font-size:14px;margin-bottom:14px;}
+.ac-pair{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;}
+.ac-side{display:flex;flex-direction:column;gap:6px;}
+.ac-side-lbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:700;}
+.ac-side-title{font-family:var(--font-serif);font-size:18px;font-weight:700;color:#fff;line-height:1.25;}
+.ac-side.people .ac-side-title{color:var(--rv-green-400);}
+.ac-tag{display:inline-flex;align-items:center;background:var(--rv-green-400);color:#001957;font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 8px;border-radius:3px;white-space:nowrap;align-self:flex-start;}
+.ac-arrow{display:flex;align-items:center;justify-content:center;color:var(--rv-green-400);opacity:.8;}
+.ac-arrow svg{width:22px;height:22px;}
+.ac-desc{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);font-size:14px;line-height:1.6;color:rgba(255,255,255,.72);}
+.ac-desc strong{color:#fff;font-weight:700;}
 /* CTA */
-.metapher-cta{text-align:center;margin-top:40px;}
-/* Mobile */
+.metapher-cta{text-align:center;margin-top:44px;}
+/* Responsive */
+@media (max-width:900px){
+  .motor-cost{position:static;transform:none;margin:12px auto;max-width:none;width:100%;display:flex;align-items:center;gap:16px;}
+  .motor-cost::before{position:static;flex-shrink:0;margin:0;}
+  .motor-cost.left,.motor-cost.right{transform:none;}
+  .motor-cost .cost-num{font-size:22px;}
+  .motor-hero{margin-bottom:44px;}
+}
 @media (max-width:680px){
-  .mi-header{grid-template-columns:1fr;gap:2px;}
-  .mi-col-hdr.arrow-hdr{display:none;}
-  .mi-row{grid-template-columns:1fr;gap:2px;}
-  .mi-arrow-cell{flex-direction:row;padding:8px 22px;gap:10px;}
-  .mi-arrow-label{writing-mode:horizontal-tb;transform:none;}
+  .analog-grid{grid-template-columns:1fr;gap:14px;}
+  .analog-card{padding:20px;}
+  .ac-side-title{font-size:16px;}
+  .motor-svg{max-width:100%;}
+  .motor-label{font-size:13px;}
 }
 
 /* ===== Commitment-Feld ===== */
@@ -236,6 +241,21 @@ section{padding:72px 0;}
 .pain-card.selected .pain-tag{background:rgba(255,255,255,.25);color:#fff;}
 .pain-actions{text-align:center;margin-top:32px;}
 .pain-hint{font-size:13px;color:var(--fg-muted);margin-top:12px;}
+/* KI-Diagnose-Loader */
+@keyframes ki-node-pulse{0%,100%{opacity:.35;transform:scale(1);}50%{opacity:1;transform:scale(1.12);}}
+@keyframes ki-dots-anim{0%,20%{content:"";}40%{content:".";}60%{content:"..";}80%,100%{content:"...";}}
+.ki-loader{max-width:520px;margin:24px auto 0;background:var(--rv-blue-900);border:1px solid rgba(167,213,76,.3);border-radius:16px;padding:20px 24px;color:#fff;}
+.ki-loader-inner{display:flex;align-items:center;gap:20px;}
+.ki-loader-brain{flex-shrink:0;filter:drop-shadow(0 0 8px rgba(167,213,76,.4));}
+.ki-node{transform-origin:center;animation:ki-node-pulse 1.6s ease-in-out infinite;fill:var(--rv-green-400);fill-opacity:.35;}
+.ki-n1{animation-delay:0s;} .ki-n2{animation-delay:.2s;} .ki-n3{animation-delay:.4s;} .ki-n4{animation-delay:.6s;} .ki-n5{animation-delay:.8s;}
+.ki-loader-txt{flex:1;min-width:0;}
+.ki-loader-label{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rv-green-400);margin-bottom:4px;}
+.ki-loader-steps{display:block;font-family:var(--font-serif);font-size:17px;line-height:1.35;}
+.ki-dots::after{content:"...";display:inline-block;animation:ki-dots-loop 1.5s steps(4) infinite;overflow:hidden;vertical-align:bottom;}
+@keyframes ki-dots-loop{0%{width:0;}100%{width:1.2em;}}
+.ki-dots{display:inline-block;overflow:hidden;vertical-align:bottom;width:1.2em;text-align:left;}
+@media (prefers-reduced-motion:reduce){.ki-node{animation:none;} .ki-dots::after{animation:none;}}
 
 /* ---------- Kennzahlen-Slider ---------- */
 .kennzahlen{max-width:960px;margin:34px auto 0;background:#fff;border:1.5px solid var(--rv-gray-200);border-radius:var(--radius-lg);padding:26px 26px 10px;}
@@ -655,179 +675,186 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
     <h2 class="rv-section-title">Was würden Sie tun,<br>wenn Ihre <span style="color:var(--rv-green-400)">Schlüsselmaschine</span> ausfiele?</h2>
     <p class="rv-section-lead">Kein Unternehmer lässt sein wichtigstes Produktionsmittel unversichert und ungewartet laufen. Für Ihre Belegschaft gilt exakt dasselbe Prinzip — konsequent, steuerlich klug und mit R+V als Partner.</p>
 
-    <div class="metapher-infographic" id="metapher-wrap">
-
-      <!-- Column headers -->
-      <div class="mi-header">
-        <div class="mi-col-hdr machine">
-          <div class="hdr-icon-circle">
-            <svg class="mi-gear-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-          </div>
-          <div>
-            <div class="col-label">Ihre Schlüsselmaschine</div>
-            <div class="col-sublabel">Produktionsmittel · Anlagevermögen</div>
-          </div>
+    <!-- Motor-Hero: zentrale Maschine mit Kosten-Badges -->
+    <div class="motor-hero">
+      <div class="motor-stage">
+        <!-- Kosten-Badge links: AU-Tag -->
+        <div class="motor-cost left">
+          <span class="cost-num">400 €</span>
+          <span class="cost-label"><strong>pro Krankheits&shy;tag &amp; Mit&shy;arbeitendem</strong> — Lohnfortzahlung, Ersatzkraft, Produktivitätsverlust</span>
+          <span class="cost-sub">Richtwert BAuA / BMAS</span>
         </div>
-        <div class="mi-col-hdr arrow-hdr">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </div>
-        <div class="mi-col-hdr people">
-          <div class="hdr-icon-circle">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--rv-green-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </div>
-          <div>
-            <div class="col-label">Ihre Belegschaft</div>
-            <div class="col-sublabel">Humankapital · Erfolgsfaktor Nr. 1</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 1: Maschinenkasko → bUV -->
-      <div class="mi-row">
-        <div class="mi-machine-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-          </div>
-          <div>
-            <span class="mi-cell-title">Maschinenkasko</span>
-            <span class="mi-cell-desc">Schutz bei Ausfall, Schaden oder Kollision — die Produktion läuft weiter, auch wenn es kracht.</span>
-          </div>
-        </div>
-        <div class="mi-arrow-cell">
-          <span class="mi-arrow-label">entspricht</span>
-          <div class="mi-arrow-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
-        <div class="mi-people-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--rv-green-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path d="M9 12l2 2 4-4"/>
-            </svg>
-          </div>
-          <div>
-            <div class="mi-tag">bUV</div>
-            <span class="mi-cell-title">Mitarbeiterkasko</span>
-            <span class="mi-cell-desc">Betriebskostenersatz an Sie als Arbeitgeber bei Ausfall + persönlicher Unfallschutz für jeden Mitarbeitenden.</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 2: Wartung/Schmierstoffe → bKV -->
-      <div class="mi-row">
-        <div class="mi-machine-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-            </svg>
-          </div>
-          <div>
-            <span class="mi-cell-title">Regelmäßige Wartung &amp; Schmierstoffe</span>
-            <span class="mi-cell-desc">Prävention vor Reparatur — Effizienz und Lebensdauer der Maschine erhalten.</span>
-          </div>
-        </div>
-        <div class="mi-arrow-cell">
-          <span class="mi-arrow-label">entspricht</span>
-          <div class="mi-arrow-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
-        <div class="mi-people-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--rv-green-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-            </svg>
-          </div>
-          <div>
-            <div class="mi-tag">bKV</div>
-            <span class="mi-cell-title">BGM &amp; betriebliche Krankenversicherung</span>
-            <span class="mi-cell-desc">Weniger Fehltage, schnellere Genesung, höhere Produktivität — messbar und steuerlich begünstigt.</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 3: Stark beanspruchte Teile → bAV + LAZ -->
-      <div class="mi-row">
-        <div class="mi-machine-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-          </div>
-          <div>
-            <span class="mi-cell-title">Stark beanspruchte Teile rechtzeitig ersetzen</span>
-            <span class="mi-cell-desc">Teile mit hoher Last fallen früher aus — vorausschauend planen statt ungeplant reagieren.</span>
-          </div>
-        </div>
-        <div class="mi-arrow-cell">
-          <span class="mi-arrow-label">entspricht</span>
-          <div class="mi-arrow-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </div>
-        </div>
-        <div class="mi-people-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--rv-green-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
-          <div>
-            <div class="mi-tag">bAV + LAZ</div>
-            <span class="mi-cell-title">Frühzeitige Übergänge ermöglichen</span>
-            <span class="mi-cell-desc">Mitarbeitende mit körperlicher Belastung früher in den Ruhestand — bAV und Langzeitkonto machen das finanzierbar.</span>
-          </div>
+        <!-- Motor-SVG -->
+        <svg class="motor-svg" viewBox="0 0 520 320" role="img" aria-label="Stilisierte industrielle Maschine">
+          <defs>
+            <linearGradient id="motorBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2a4562"/>
+              <stop offset="1" stop-color="#152840"/>
+            </linearGradient>
+            <linearGradient id="motorTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#3a5b7d"/>
+              <stop offset="1" stop-color="#1e3651"/>
+            </linearGradient>
+            <linearGradient id="baseGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0f2236"/>
+              <stop offset="1" stop-color="#050d18"/>
+            </linearGradient>
+            <radialGradient id="glowRing" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="rgba(167,213,76,.45)"/>
+              <stop offset="1" stop-color="rgba(167,213,76,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- Glow hinter dem Motor -->
+          <ellipse class="motor-pulse" cx="260" cy="180" rx="230" ry="120" fill="url(#glowRing)"/>
+          <!-- Fundament / Base -->
+          <rect x="60" y="270" width="400" height="26" rx="4" fill="url(#baseGrad)"/>
+          <rect x="60" y="270" width="400" height="6" fill="rgba(255,255,255,.06)"/>
+          <!-- Bolzen im Fundament -->
+          <circle cx="95" cy="283" r="3" fill="rgba(167,213,76,.6)"/>
+          <circle cx="425" cy="283" r="3" fill="rgba(167,213,76,.6)"/>
+          <!-- Rohr/Ausgang links -->
+          <rect x="20" y="200" width="80" height="18" rx="3" fill="#2a4562"/>
+          <rect x="20" y="200" width="80" height="4" fill="rgba(255,255,255,.1)"/>
+          <circle cx="30" cy="209" r="4" fill="#0b1929"/>
+          <!-- Rohr/Ausgang rechts -->
+          <rect x="420" y="140" width="80" height="18" rx="3" fill="#2a4562"/>
+          <rect x="420" y="140" width="80" height="4" fill="rgba(255,255,255,.1)"/>
+          <circle cx="490" cy="149" r="4" fill="#0b1929"/>
+          <!-- Kabel oben -->
+          <path d="M 260 20 Q 260 60 260 90" stroke="#2a4562" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="260" cy="18" r="6" fill="#0b1929" stroke="#2a4562" stroke-width="2"/>
+          <!-- Kühlrippen oben -->
+          <rect x="120" y="70" width="280" height="60" rx="6" fill="url(#motorTop)"/>
+          <line x1="140" y1="80" x2="380" y2="80" stroke="rgba(0,0,0,.4)" stroke-width="2"/>
+          <line x1="140" y1="92" x2="380" y2="92" stroke="rgba(0,0,0,.4)" stroke-width="2"/>
+          <line x1="140" y1="104" x2="380" y2="104" stroke="rgba(0,0,0,.4)" stroke-width="2"/>
+          <line x1="140" y1="116" x2="380" y2="116" stroke="rgba(0,0,0,.4)" stroke-width="2"/>
+          <!-- Motorkorpus -->
+          <rect x="100" y="128" width="320" height="146" rx="10" fill="url(#motorBody)" stroke="rgba(167,213,76,.15)" stroke-width="1.5"/>
+          <!-- Typenschild -->
+          <rect x="220" y="238" width="120" height="28" rx="3" fill="rgba(0,0,0,.35)" stroke="rgba(167,213,76,.3)" stroke-width="1"/>
+          <!-- Anschluss-LEDs -->
+          <circle cx="118" cy="250" r="4" fill="var(--rv-green-400)"/>
+          <circle cx="132" cy="250" r="4" fill="rgba(255,255,255,.2)"/>
+          <circle cx="402" cy="250" r="4" fill="var(--rv-green-400)"/>
+          <circle cx="388" cy="250" r="4" fill="rgba(255,255,255,.2)"/>
+          <!-- Großes Zahnrad links -->
+          <g class="motor-gear-large">
+            <circle cx="187" cy="178" r="42" fill="#0b1929" stroke="rgba(167,213,76,.4)" stroke-width="2"/>
+            <circle cx="187" cy="178" r="30" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+            <circle cx="187" cy="178" r="10" fill="var(--rv-green-400)"/>
+            <!-- 8 Zähne -->
+            <g fill="#0b1929" stroke="rgba(167,213,76,.4)" stroke-width="2">
+              <rect x="181" y="128" width="12" height="12" rx="1"/>
+              <rect x="181" y="216" width="12" height="12" rx="1"/>
+              <rect x="137" y="172" width="12" height="12" rx="1"/>
+              <rect x="225" y="172" width="12" height="12" rx="1"/>
+              <rect x="150" y="141" width="12" height="12" rx="1" transform="rotate(45 156 147)"/>
+              <rect x="212" y="141" width="12" height="12" rx="1" transform="rotate(-45 218 147)"/>
+              <rect x="150" y="203" width="12" height="12" rx="1" transform="rotate(-45 156 209)"/>
+              <rect x="212" y="203" width="12" height="12" rx="1" transform="rotate(45 218 209)"/>
+            </g>
+          </g>
+          <!-- Kleines Zahnrad rechts -->
+          <g class="motor-gear-small">
+            <circle cx="333" cy="208" r="26" fill="#0b1929" stroke="rgba(167,213,76,.4)" stroke-width="2"/>
+            <circle cx="333" cy="208" r="17" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+            <circle cx="333" cy="208" r="6" fill="var(--rv-green-400)"/>
+            <g fill="#0b1929" stroke="rgba(167,213,76,.4)" stroke-width="2">
+              <rect x="329" y="176" width="8" height="8" rx="1"/>
+              <rect x="329" y="232" width="8" height="8" rx="1"/>
+              <rect x="301" y="204" width="8" height="8" rx="1"/>
+              <rect x="357" y="204" width="8" height="8" rx="1"/>
+            </g>
+          </g>
+          <!-- Kolben oben rechts -->
+          <rect x="290" y="140" width="20" height="10" rx="2" fill="rgba(167,213,76,.5)"/>
+          <rect x="315" y="140" width="20" height="10" rx="2" fill="rgba(255,255,255,.15)"/>
+          <rect x="340" y="140" width="20" height="10" rx="2" fill="rgba(255,255,255,.15)"/>
+          <rect x="365" y="140" width="20" height="10" rx="2" fill="rgba(255,255,255,.15)"/>
+        </svg>
+        <div class="motor-label">Ihre Schlüsselmaschine<small>= IHRE BELEGSCHAFT</small></div>
+        <!-- Kosten-Badge rechts: Fluktuation -->
+        <div class="motor-cost right">
+          <span class="cost-num">1 × Brutto-<br>jahresgehalt</span>
+          <span class="cost-label"><strong>pro Kündigung &amp; Nach&shy;besetzung</strong> — Recruiting, Onboarding, Produktivitätsverlust</span>
+          <span class="cost-sub">Studien: DGFP, Gallup</span>
         </div>
       </div>
+    </div>
 
-      <!-- Row 4: Ersatzteile/Nachfolge → bAV + bKV -->
-      <div class="mi-row">
-        <div class="mi-machine-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
+    <!-- 2×2 Analogie-Karten -->
+    <div class="analog-grid metapher-wrap" id="metapher-wrap">
+
+      <!-- Card 1: Maschinenkasko → bUV -->
+      <div class="analog-card">
+        <span class="ac-num">1</span>
+        <div class="ac-pair">
+          <div class="ac-side machine">
+            <span class="ac-side-lbl">Maschine</span>
+            <span class="ac-side-title">Maschinen&shy;kasko</span>
           </div>
-          <div>
-            <span class="mi-cell-title">Seltene Ersatzteile vorhalten &amp; Nachfolge sichern</span>
-            <span class="mi-cell-desc">Schlüsselkomponenten fehlen selten — aber wenn doch, steht die Produktion. Deshalb vorhalten.</span>
-          </div>
-        </div>
-        <div class="mi-arrow-cell">
-          <span class="mi-arrow-label">entspricht</span>
-          <div class="mi-arrow-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div class="ac-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          <div class="ac-side people">
+            <span class="ac-tag">bUV</span>
+            <span class="ac-side-title">Mitarbeiter&shy;kasko</span>
           </div>
         </div>
-        <div class="mi-people-cell">
-          <div class="mi-icon-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--rv-green-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </div>
-          <div>
-            <div class="mi-tag">bAV + bKV</div>
-            <span class="mi-cell-title">Fachkräfte binden &amp; Nachfolge planen</span>
-            <span class="mi-cell-desc">Attraktive Benefits als Wettbewerbsargument — im Recruiting, bei Betriebsübergaben und in der Jahresgespräch-Runde.</span>
-          </div>
-        </div>
+        <p class="ac-desc">Kein Betrieb lässt seine Anlage ohne Kasko laufen. Beim Menschen: Betriebs&shy;kosten&shy;ersatz an Sie als Arbeitgeber bei Ausfall <strong>plus</strong> persönlicher Unfallschutz — 24/7, weltweit, auch in der Freizeit.</p>
       </div>
 
-    </div><!-- /metapher-infographic -->
+      <!-- Card 2: Wartung → bKV -->
+      <div class="analog-card">
+        <span class="ac-num">2</span>
+        <div class="ac-pair">
+          <div class="ac-side machine">
+            <span class="ac-side-lbl">Maschine</span>
+            <span class="ac-side-title">Wartung &amp; Schmier&shy;stoffe</span>
+          </div>
+          <div class="ac-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          <div class="ac-side people">
+            <span class="ac-tag">bKV</span>
+            <span class="ac-side-title">BGM &amp; betriebl. Kranken&shy;versicherung</span>
+          </div>
+        </div>
+        <p class="ac-desc">Prävention statt Reparatur — bei der Maschine selbstverständlich. Beim Menschen: schnellere Facharzt&shy;termine, Gesund&shy;heits&shy;budget, weniger Fehltage. Jeder eingesparte Krankheitstag = <strong>400 € gerettet</strong>.</p>
+      </div>
+
+      <!-- Card 3: Stark beanspruchte Teile → bAV + LAZ -->
+      <div class="analog-card">
+        <span class="ac-num">3</span>
+        <div class="ac-pair">
+          <div class="ac-side machine">
+            <span class="ac-side-lbl">Maschine</span>
+            <span class="ac-side-title">Verschleiß&shy;teile rechtzeitig ersetzen</span>
+          </div>
+          <div class="ac-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          <div class="ac-side people">
+            <span class="ac-tag">bAV + LAZ</span>
+            <span class="ac-side-title">Früh&shy;zeitige Übergänge ermöglichen</span>
+          </div>
+        </div>
+        <p class="ac-desc">Bauteile unter Hoch&shy;last fallen früher aus. Genauso ist es beim Menschen: körperlich belastete Mitarbeitende brauchen einen Weg, <strong>abgesichert früher</strong> auszuscheiden — bAV plus Langzeit&shy;konto machen das finanzierbar.</p>
+      </div>
+
+      <!-- Card 4: Ersatzteile → bAV + bKV -->
+      <div class="analog-card">
+        <span class="ac-num">4</span>
+        <div class="ac-pair">
+          <div class="ac-side machine">
+            <span class="ac-side-lbl">Maschine</span>
+            <span class="ac-side-title">Ersatz&shy;teile bevorraten</span>
+          </div>
+          <div class="ac-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+          <div class="ac-side people">
+            <span class="ac-tag">bAV + bKV</span>
+            <span class="ac-side-title">Fachkräfte binden, Nachfolge sichern</span>
+          </div>
+        </div>
+        <p class="ac-desc">Kritische Ersatzteile bevorraten Sie präventiv. Fachkräfte auch — Zusatz&shy;leistungen sind der Unter&shy;schied zwischen „bleibt bis zur Rente" und einem Bruttojahresgehalt Ersatz&shy;kosten für den Nachfolger.</p>
+      </div>
+
+    </div><!-- /analog-grid -->
 
     <div class="metapher-cta">
       <p style="font-size:15px;color:rgba(255,255,255,.55);margin-bottom:16px">Welche dieser Punkte betreffen Ihr Unternehmen?</p>
@@ -940,10 +967,34 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
 
     <div class="pain-actions">
       <button class="rv-btn rv-btn--primary" id="btn-analyse" onclick="runAnalysis()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 4.9 12L21 21"/><path d="M11 4v7l4 2"/></svg>
-        Analyse auswerten
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <span id="btn-analyse-label">KI-Diagnose starten</span>
       </button>
       <p class="pain-hint" id="pain-hint">Wählen Sie mindestens einen Punkt aus (oder werten Sie die Team-Analyse aus).</p>
+    </div>
+
+    <!-- KI-Diagnose-Loader (erscheint während der Analyse) -->
+    <div class="ki-loader" id="ki-loader" style="display:none">
+      <div class="ki-loader-inner">
+        <div class="ki-loader-brain">
+          <svg viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="var(--rv-green-400)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path class="ki-node ki-n1" d="M20 20a6 6 0 1 1-12 0 6 6 0 0 1 12 0z"/>
+            <path class="ki-node ki-n2" d="M56 20a6 6 0 1 1-12 0 6 6 0 0 1 12 0z"/>
+            <path class="ki-node ki-n3" d="M38 44a6 6 0 1 1-12 0 6 6 0 0 1 12 0z"/>
+            <path class="ki-node ki-n4" d="M20 56a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/>
+            <path class="ki-node ki-n5" d="M52 56a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/>
+            <line x1="20" y1="20" x2="32" y2="38"/>
+            <line x1="44" y1="20" x2="32" y2="38"/>
+            <line x1="32" y1="44" x2="16" y2="52"/>
+            <line x1="32" y1="44" x2="48" y2="52"/>
+            <line x1="20" y1="20" x2="44" y2="20"/>
+          </svg>
+        </div>
+        <div class="ki-loader-txt">
+          <span class="ki-loader-label">KI-Diagnose läuft</span>
+          <span class="ki-loader-steps" id="ki-loader-steps">Auswertung Ihrer Kennzahlen<span class="ki-dots">…</span></span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -961,8 +1012,8 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
         <div style="position:absolute;top:0;right:0;width:220px;height:100%;background:linear-gradient(135deg,transparent,rgba(167,213,76,.07));pointer-events:none"></div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
           <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);font-size:11px;font-weight:700;padding:5px 13px;border-radius:999px">
-            <svg class="icon" viewBox="0 0 24 24" style="width:.85em;height:.85em"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-            Ihre persönliche Diagnose
+            <svg class="icon" viewBox="0 0 24 24" style="width:.85em;height:.85em"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            KI-Diagnose · Ihre Unternehmens&shy;kennzahlen
           </span>
         </div>
         <div id="ai-diagnosis-text" style="font-size:17px;line-height:1.65;margin-bottom:18px;max-width:780px"></div>
@@ -1269,13 +1320,13 @@ var PRODUCTS = {
 };
 
 var PAIN_POINTS = [
-  { id:'fluktuation', title:'Hohe Fluktuation', desc:'Wir verlieren Fachkräfte an den Wettbewerb und finden schwer Ersatz.', products:['bav','bkv'] },
-  { id:'fehlzeiten', title:'Hohe Fehlzeiten', desc:'Krankenstand und Ausfalltage belasten spürbar unseren Betrieb.', products:['bkv','buv'] },
-  { id:'versorgungsluecke', title:'Versorgungslücke im Alter', desc:'Unseren Mitarbeitenden droht eine spürbare Rentenlücke.', products:['bav'] },
-  { id:'unfallrisiko', title:'Ausfall von Schlüsselkräften', desc:'Ein Unfall einzelner Personen würde unseren Betrieb hart treffen.', products:['buv'] },
-  { id:'gf-vorsorge', title:'Eigene Altersvorsorge ungeklärt', desc:'Jedes Jahr ohne GF-Versorgung kostet Sie tausende Euro Altersvorsorge — Kaskadenbesteuerung frisst fast die Hälfte jeder Gewinnentnahme.', products:['gf'] },
-  { id:'personalkosten', title:'Steigende Personalkosten', desc:'Klassische Gehaltserhöhungen kosten viel, kommen aber kaum netto an.', products:['bkv','bav'] },
-  { id:'wertschaetzung', title:'Mangelnde Wertschätzung im Team', desc:'Unser Team wünscht sich sichtbare Zusatzleistungen statt nur Gehalt.', products:['bkv','bav'] }
+  { id:'fluktuation', title:'Fluktuation kostet mich sichtbar', desc:'Jede ungeplante Kündigung reißt ~<strong>1 Bruttojahresgehalt</strong> aus dem Ergebnis (Recruiting, Einarbeitung, Produktivitätsloch).', products:['bav','bkv'] },
+  { id:'fehlzeiten', title:'Krankenstand frisst Produktivität', desc:'Jeder AU-Tag pro MA kostet mich real <strong>≈ 400 €</strong> — Lohnfortzahlung, Ersatz, verlorene Deckungsbeiträge. Nichts davon ist bislang abgesichert.', products:['bkv','buv'] },
+  { id:'versorgungsluecke', title:'Rentenlücke → Bindungsproblem', desc:'Ohne bAV kommt ein Facharbeiter mit rund <strong>1.200 € Rente</strong> raus — das erzählt er intern. Und beim Wettbewerber, der bAV bietet.', products:['bav'] },
+  { id:'unfallrisiko', title:'Ausfall einer Schlüsselkraft', desc:'Wenn der Meister/Techniker 6 Monate ausfällt, stehen Aufträge — <strong>Betriebskostenersatz</strong> gibt es nur mit bUV.', products:['buv'] },
+  { id:'gf-vorsorge', title:'Meine eigene GF-Versorgung', desc:'Jeder Euro Gewinnentnahme wird <strong>zweimal besteuert</strong> — Kaskadensteuer frisst rund <strong>49 %</strong>. Vermeidbar über die Unterstützungskasse.', products:['gf'] },
+  { id:'personalkosten', title:'Gehaltsrunde bringt kaum netto an', desc:'100 € Bruttoerhöhung = ~<strong>52 € beim MA</strong>, ~<strong>120 € für mich</strong>. Steuerfreie Bausteine sind netto identisch — bei halben Arbeitgeberkosten.', products:['bkv','bav'] },
+  { id:'wertschaetzung', title:'Team spürt keine Wert&shy;schätzung', desc:'Gehalt ist nach 3 Monaten normal — <strong>Zusatzleistungen bleiben sichtbar</strong>. Ohne die verliere ich den Bewerbungs&shy;vergleich, bevor er beginnt.', products:['bkv','bav'] }
 ];
 
 var SLIDERS = [
@@ -1285,7 +1336,7 @@ var SLIDERS = [
   { id:'fluktuation', label:'Fluktuation (% der Belegschaft/Jahr)', min:0, max:30, step:1, value:8, fmt:function(v){return v+' %';} }
 ];
 var AU_KOSTEN_TAG = 400;
-var FLUKTUATION_KOSTEN_QUOTE = 0.25;
+var FLUKTUATION_KOSTEN_QUOTE = 1.0;
 
 /* ---------- Team-Analyse: konkrete Schieberegler-Fragen (aus Vollversion) ---------- */
 var GF_FRAGEN = [
@@ -1509,10 +1560,10 @@ function renderDiagnosis(){
 
   var text = '';
   if(d.ma > 0 && d.brutto > 0 && (d.fehlzeitkosten > 0 || d.fluktuationskosten > 0)){
-    text = 'Auf Basis Ihrer Angaben (<strong>' + d.ma + ' Mitarbeitende</strong>, Ø ' +
-      d.brutto.toLocaleString('de-DE') + ' € Brutto) ergibt sich ein geschätzter Kostendruck von ' +
+    text = 'Klartext: Bei <strong>' + d.ma + ' Mitarbeitenden</strong> und Ø ' +
+      d.brutto.toLocaleString('de-DE') + ' € Brutto verlieren Sie derzeit rechnerisch ' +
       '<strong style="color:var(--rv-green-400)">' + fmtE(total) + ' pro Jahr</strong> — ' +
-      'allein durch Fehlzeiten und Fluktuation.';
+      'ohne, dass es in Ihrer BWA als eigene Zeile auftaucht. Fehlzeiten (~400 €/AU-Tag) und Fluktuation (1 Bruttojahresgehalt je Nachbesetzung) sind die zwei stillen Ergebnis-Fresser.';
     if(hasPainGF){
       var gfJahrVerlustNarr = Math.round(getGFJahr() * 0.49);
       text += ' Hinzu kommen als Geschäftsführer ca. <strong style="color:#ffb3b3">' +
@@ -1532,7 +1583,7 @@ function renderDiagnosis(){
   if((selectedPains.has('fluktuation') || selectedPains.has('wertschaetzung') || selectedPains.has('personalkosten')) && d.ma > 0){
     var wechselnde = Math.round(d.ma * (d.fluk / 100));
     items.push({ sev:'hoch',
-      text: wechselnde + ' Nachbesetzung' + (wechselnde !== 1 ? 'en' : '') + ' / Jahr × 25 % Jahresbrutto = <strong>' +
+      text: wechselnde + ' Nachbesetzung' + (wechselnde !== 1 ? 'en' : '') + ' / Jahr × 1 Bruttojahresgehalt = <strong>' +
         fmtE(d.fluktuationskosten) + ' Fluktuationskosten / Jahr</strong> — direkt beeinflussbar durch Mitarbeiterbindung.' });
   }
   if(selectedPains.has('versorgungsluecke') && d.ma > 0){
@@ -1567,31 +1618,56 @@ function runAnalysis(){
     document.getElementById('pain-hint').style.color = 'var(--rv-red-600)';
     return;
   }
-  analysed = true;
-  var matched = new Set(teamMatchedProducts);
-  selectedPains.forEach(function(pid){
-    var pp = PAIN_POINTS.find(function(p){ return p.id === pid; });
-    pp.products.forEach(function(prod){ matched.add(prod); });
-  });
-  renderProductCards(matched);
-  // Auto-Add: alle passenden Produkte sofort in den Plan — Herz + Investitionsrechnung befüllen sich direkt
-  matched.forEach(function(key){
-    planProducts.add(key);
-    var btn = document.getElementById('toggle-'+key);
-    if(btn){
-      btn.classList.add('added');
-      btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Im Plan enthalten</span>';
+  var btn = document.getElementById('btn-analyse');
+  var loader = document.getElementById('ki-loader');
+  var loaderTxt = document.getElementById('ki-loader-steps');
+  if(btn){ btn.disabled = true; btn.style.opacity = '.6'; btn.style.pointerEvents = 'none'; }
+  if(loader){ loader.style.display = 'block'; }
+  var steps = [
+    'Auswertung Ihrer Kennzahlen',
+    'Abgleich mit Branchenbenchmarks',
+    'Berechnung Ihres Kostendrucks',
+    'Auswahl der passenden Bausteine'
+  ];
+  var i = 0;
+  if(loaderTxt) loaderTxt.innerHTML = steps[0] + '<span class="ki-dots"></span>';
+  var stepTimer = setInterval(function(){
+    i++;
+    if(i < steps.length && loaderTxt){
+      loaderTxt.innerHTML = steps[i] + '<span class="ki-dots"></span>';
+    } else {
+      clearInterval(stepTimer);
     }
-  });
-  renderStatusQuo();
-  renderDiagnosis();
-  updatePlanChip();
-  updateSummary();
-  suggestTierFromPlan();
-  updateInvestMAFromSlider();
-  updateMobileCta();
-  setStep(2);
-  document.getElementById('produkte').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 520);
+  setTimeout(function(){
+    clearInterval(stepTimer);
+    if(loader) loader.style.display = 'none';
+    if(btn){ btn.disabled = false; btn.style.opacity = ''; btn.style.pointerEvents = ''; }
+    analysed = true;
+    var matched = new Set(teamMatchedProducts);
+    selectedPains.forEach(function(pid){
+      var pp = PAIN_POINTS.find(function(p){ return p.id === pid; });
+      pp.products.forEach(function(prod){ matched.add(prod); });
+    });
+    renderProductCards(matched);
+    matched.forEach(function(key){
+      planProducts.add(key);
+      var pbtn = document.getElementById('toggle-'+key);
+      if(pbtn){
+        pbtn.classList.add('added');
+        pbtn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Im Plan enthalten</span>';
+      }
+    });
+    renderStatusQuo();
+    renderDiagnosis();
+    updatePlanChip();
+    updateSummary();
+    suggestTierFromPlan();
+    updateInvestMAFromSlider();
+    updateMobileCta();
+    setStep(2);
+    document.getElementById('produkte').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 2100);
 }
 
 function computeStatusQuo(){
@@ -1616,7 +1692,7 @@ function renderStatusQuo(){
   box.style.display = 'block';
   var cards = [];
   cards.push('<div class="sq-card"><div class="sq-label">Geschätzte Fehlzeitkosten / Jahr</div><div class="sq-val tnum">'+fmtE(d.fehlzeitkosten)+'</div><div class="sq-note">'+d.kranken+' Tage × '+d.ma+' MA × '+AU_KOSTEN_TAG+' € Richtwert/Tag (Lohnfortzahlung + Ersatz + Produktivitätsausfall)</div></div>');
-  cards.push('<div class="sq-card"><div class="sq-label">Geschätzte Fluktuationskosten / Jahr</div><div class="sq-val tnum">'+fmtE(d.fluktuationskosten)+'</div><div class="sq-note">≈ '+d.wechselnde+' Nachbesetzungen × 25 % eines Jahresbruttos (Recruiting, Einarbeitung, Produktivitätsverlust)</div></div>');
+  cards.push('<div class="sq-card"><div class="sq-label">Geschätzte Fluktuationskosten / Jahr</div><div class="sq-val tnum">'+fmtE(d.fluktuationskosten)+'</div><div class="sq-note">≈ '+d.wechselnde+' Nachbesetzungen × 1 Bruttojahresgehalt (Recruiting, Einarbeitung, Produktivitätsverlust — DGFP-Richtwert)</div></div>');
   cards.push('<div class="sq-card"><div class="sq-label">Rentenlücke je betroffenem MA</div><div class="sq-val tnum">'+fmtE(d.luecke)+' <span style="font-size:.9rem;color:#9fc0dd">/ Monat</span></div><div class="sq-note">Netto vor Renteneintritt ca. '+fmtE(d.netto)+', gesetzl. Rente ca. '+fmtE(d.rente)+' — genau hier setzt die bAV an</div></div>');
   grid.innerHTML = cards.join('');
 }
