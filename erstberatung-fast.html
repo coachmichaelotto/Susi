@@ -123,6 +123,75 @@ header.site{position:sticky;top:0;z-index:50;background:var(--rv-blue-900);borde
 .hero-right img{width:52%;max-width:230px;object-fit:contain;}
 .hero-right .tag{position:absolute;top:20px;right:20px;background:var(--rv-blue-900);color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;padding:5px 11px;border-radius:var(--radius-pill);text-transform:uppercase;}
 
+/* ===== Maschinen-Metapher ===== */
+.metapher-section{background:var(--rv-cream);padding:72px 24px 56px;overflow:hidden;}
+.metapher-section .rv-section-title{text-align:center;}
+.metapher-section .rv-section-lead{text-align:center;max-width:680px;margin:0 auto 48px;}
+.metapher-wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+.metapher-cols-hdr{display:grid;grid-template-columns:1fr 120px 1fr;gap:10px;margin-bottom:4px;}
+.mch{font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--rv-blue-900);display:flex;align-items:center;gap:8px;}
+.mch.right{justify-content:flex-end;}
+.mch.center{justify-content:center;font-size:11px;font-family:var(--font-body);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-muted);}
+.mch svg{width:20px;height:20px;flex-shrink:0;}
+/* Row */
+.metapher-row{display:grid;grid-template-columns:1fr 120px 1fr;gap:10px;align-items:center;
+  opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease;}
+.metapher-wrap.visible .metapher-row:nth-child(2){opacity:1;transform:none;transition-delay:.05s;}
+.metapher-wrap.visible .metapher-row:nth-child(3){opacity:1;transform:none;transition-delay:.25s;}
+.metapher-wrap.visible .metapher-row:nth-child(4){opacity:1;transform:none;transition-delay:.45s;}
+.metapher-wrap.visible .metapher-row:nth-child(5){opacity:1;transform:none;transition-delay:.65s;}
+@media (prefers-reduced-motion:reduce){
+  .metapher-row{transition:none;opacity:1;transform:none;}
+  .mc-line{transition:none;width:100%!important;}
+}
+/* Cards */
+.mc-card{border-radius:var(--radius-md);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
+.mc-machine{background:#fff;border:1.5px solid var(--rv-gray-200);color:var(--rv-blue-900);}
+.mc-machine strong{font-size:13px;display:block;margin-bottom:3px;}
+.mc-machine small{font-size:11px;color:var(--fg-muted);line-height:1.45;}
+.mc-people{background:var(--rv-blue-900);color:#fff;border-left:3px solid var(--rv-green-400);}
+.mc-people strong{font-size:13px;display:block;margin-bottom:3px;}
+.mc-people small{font-size:11px;opacity:.75;line-height:1.45;}
+.mc-tag{display:inline-flex;align-items:center;background:var(--rv-green-400);color:var(--rv-blue-900);font-size:9px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:3px;margin-bottom:5px;white-space:nowrap;flex-shrink:0;}
+.mc-icon{font-size:20px;flex-shrink:0;line-height:1;}
+/* Connector */
+.mc-connector{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 4px;}
+.mc-conn-txt{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-muted);}
+.mc-line-wrap{display:flex;align-items:center;gap:3px;width:100%;}
+.mc-line{height:1.5px;background:var(--rv-gray-300);flex:1;transform-origin:left center;
+  transform:scaleX(0);transition:transform .5s ease;}
+.mc-arrow{color:var(--rv-green-700);font-size:16px;line-height:1;opacity:0;transform:scale(.5);
+  transition:opacity .3s ease,transform .3s ease;}
+.metapher-wrap.visible .metapher-row:nth-child(2) .mc-line{transform:scaleX(1);transition-delay:.18s;}
+.metapher-wrap.visible .metapher-row:nth-child(3) .mc-line{transform:scaleX(1);transition-delay:.38s;}
+.metapher-wrap.visible .metapher-row:nth-child(4) .mc-line{transform:scaleX(1);transition-delay:.58s;}
+.metapher-wrap.visible .metapher-row:nth-child(5) .mc-line{transform:scaleX(1);transition-delay:.78s;}
+.metapher-wrap.visible .mc-arrow{opacity:1;transform:scale(1);transition-delay:.05s;}
+.metapher-cta{text-align:center;margin-top:40px;}
+@media (max-width:680px){
+  .metapher-row,.metapher-cols-hdr{grid-template-columns:1fr;gap:6px;}
+  .mc-connector{flex-direction:row;justify-content:center;}
+  .mch.right{justify-content:flex-start;}
+}
+
+/* ===== Commitment-Feld ===== */
+.commitment-wrap{max-width:900px;margin:36px auto 0;}
+.commitment-card{background:var(--rv-blue-900);border-radius:var(--radius-lg);padding:28px 32px;color:#fff;}
+.commitment-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.commitment-hdr svg{width:22px;height:22px;flex-shrink:0;color:var(--rv-green-400);}
+.commitment-card h3{font-family:var(--font-serif);font-size:20px;margin-bottom:6px;}
+.commitment-card > p{font-size:14px;opacity:.8;margin-bottom:18px;line-height:1.55;}
+.cs-sentence{display:flex;flex-direction:column;gap:8px;}
+.cs-prompt,.cs-closing{font-size:14px;font-style:italic;opacity:.8;line-height:1.5;}
+.cs-closing{text-align:right;}
+#commitment-text{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.28);border-radius:var(--radius-md);color:#fff;padding:13px 16px;font-size:14px;line-height:1.6;resize:vertical;width:100%;box-sizing:border-box;font-family:var(--font-body);min-height:72px;}
+#commitment-text::placeholder{color:rgba(255,255,255,.4);font-style:italic;}
+#commitment-text:focus{outline:none;border-color:var(--rv-green-400);background:rgba(255,255,255,.14);}
+.commitment-note{font-size:12px;opacity:.55;margin-top:12px;}
+.summary-commitment{flex-direction:column!important;align-items:flex-start!important;gap:4px!important;}
+.commitment-q{font-size:11px;opacity:.7;}
+.commitment-a{font-style:italic;font-size:13px;}
+
 .plan-chip-wrap{position:sticky;top:60px;z-index:30;display:flex;justify-content:center;pointer-events:none;}
 .plan-chip{pointer-events:auto;display:none;align-items:center;gap:10px;background:var(--rv-blue-900);color:#fff;border-radius:var(--radius-pill);padding:8px 10px 8px 16px;font-size:13px;font-weight:700;box-shadow:var(--shadow-lg);margin-top:10px;max-width:92vw;overflow:hidden;}
 .plan-chip.show{display:flex;}
@@ -502,6 +571,19 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
 
   /* Statusquo box */
   .statusquo { border: 1pt solid #ccd4e0 !important; break-inside: avoid; }
+
+  /* Metapher section — hide in print (too visual, not needed in summary) */
+  .metapher-section { display: none !important; }
+
+  /* Commitment field — show compactly in print */
+  .commitment-wrap { display: block !important; margin: 12pt 0 !important; }
+  .commitment-card { background: #001957 !important; color: #fff !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    padding: 12pt !important; border-radius: 4pt; break-inside: avoid; }
+  .commitment-card h3 { font-size: 12pt !important; margin-bottom: 4pt !important; }
+  .commitment-card > p, .commitment-note { display: none !important; }
+  #commitment-text { background: rgba(255,255,255,.12) !important; border-color: rgba(255,255,255,.3) !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 10pt !important; }
 }
 .print-only { display: none; }
 </style>
@@ -552,6 +634,88 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
     <a href="#abschluss">Zum Abschluss →</a>
   </div>
 </div>
+
+<!-- ============ MASCHINEN-METAPHER ============ -->
+<section id="metapher" class="metapher-section">
+  <div class="container">
+    <span class="rv-eyebrow" style="text-align:center;display:block">Die entscheidende Analogie</span>
+    <h2 class="rv-section-title">Was würden Sie tun,<br>wenn Ihre <span style="color:var(--rv-green-700)">Schlüsselmaschine</span> ausfiele?</h2>
+    <p class="rv-section-lead">Kein Unternehmer lässt sein wichtigstes Produktionsmittel unversichert und ungewartet laufen. Für Ihre Belegschaft gilt exakt dasselbe Prinzip — konsequent, steuerlich klug und mit R+V als Partner.</p>
+
+    <div class="metapher-wrap" id="metapher-wrap">
+      <div class="metapher-cols-hdr">
+        <div class="mch left"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><circle cx="12" cy="12" r="7"/></svg>Ihre Schlüsselmaschine</div>
+        <div class="mch center">entspricht</div>
+        <div class="mch right">Ihre Belegschaft<svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      </div>
+
+      <!-- Reihe 1: Kasko → Mitarbeiterkasko -->
+      <div class="metapher-row">
+        <div class="mc-card mc-machine">
+          <div class="mc-icon">🛡</div>
+          <div><strong>Maschinenkasko</strong><small>Schutz bei Ausfall, Schaden oder Kollision — die Produktion läuft weiter, auch wenn es kracht.</small></div>
+        </div>
+        <div class="mc-connector">
+          <span class="mc-conn-txt">entspricht</span>
+          <div class="mc-line-wrap"><div class="mc-line"></div><span class="mc-arrow">▶</span></div>
+        </div>
+        <div class="mc-card mc-people">
+          <div><div class="mc-tag">bUV</div><strong>Mitarbeiterkasko</strong><small>Betriebskostenersatz an Sie als Arbeitgeber bei Ausfall + persönlicher Unfallschutz für jeden Mitarbeitenden.</small></div>
+        </div>
+      </div>
+
+      <!-- Reihe 2: Wartung/Schmierstoffe → bKV/BGM -->
+      <div class="metapher-row">
+        <div class="mc-card mc-machine">
+          <div class="mc-icon">🔧</div>
+          <div><strong>Regelmäßige Wartung &amp; Schmierstoffe</strong><small>Prävention vor Reparatur — Effizienz und Lebensdauer der Maschine erhalten.</small></div>
+        </div>
+        <div class="mc-connector">
+          <span class="mc-conn-txt">entspricht</span>
+          <div class="mc-line-wrap"><div class="mc-line"></div><span class="mc-arrow">▶</span></div>
+        </div>
+        <div class="mc-card mc-people">
+          <div><div class="mc-tag">bKV</div><strong>BGM &amp; betriebliche Krankenversicherung</strong><small>Weniger Fehltage, schnellere Genesung, höhere Produktivität — messbar und steuerlich begünstigt.</small></div>
+        </div>
+      </div>
+
+      <!-- Reihe 3: Stark beanspruchte Teile → bAV + LAZ -->
+      <div class="metapher-row">
+        <div class="mc-card mc-machine">
+          <div class="mc-icon">⚙️</div>
+          <div><strong>Stark beanspruchte Teile rechtzeitig ersetzen</strong><small>Teile mit hoher Last fallen früher aus — vorausschauend planen statt ungeplant reagieren.</small></div>
+        </div>
+        <div class="mc-connector">
+          <span class="mc-conn-txt">entspricht</span>
+          <div class="mc-line-wrap"><div class="mc-line"></div><span class="mc-arrow">▶</span></div>
+        </div>
+        <div class="mc-card mc-people">
+          <div><div class="mc-tag">bAV + LAZ</div><strong>Frühzeitige Übergänge ermöglichen</strong><small>Mitarbeitende mit körperlicher Belastung früher in den Ruhestand — bAV und Langzeitkonto machen das finanzierbar.</small></div>
+        </div>
+      </div>
+
+      <!-- Reihe 4: Ersatzteile/Nachfolge → Fachkräfte/bAV -->
+      <div class="metapher-row">
+        <div class="mc-card mc-machine">
+          <div class="mc-icon">🔩</div>
+          <div><strong>Seltene Ersatzteile vorhalten &amp; Nachfolge sichern</strong><small>Schlüsselkomponenten fehlen selten — aber wenn doch, steht die Produktion. Deshalb vorhalten.</small></div>
+        </div>
+        <div class="mc-connector">
+          <span class="mc-conn-txt">entspricht</span>
+          <div class="mc-line-wrap"><div class="mc-line"></div><span class="mc-arrow">▶</span></div>
+        </div>
+        <div class="mc-card mc-people">
+          <div><div class="mc-tag">bAV + bKV</div><strong>Fachkräfte binden &amp; Nachfolge planen</strong><small>Attraktive Benefits als Wettbewerbsargument — im Recruiting, bei Betriebsübergaben und in der Jahresgespräch-Runde.</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metapher-cta">
+      <p style="font-size:15px;color:var(--fg-muted);margin-bottom:16px">Welche dieser Punkte betreffen Ihr Unternehmen?</p>
+      <a href="#pain-points" class="rv-btn rv-btn--primary rv-btn--pill">Jetzt Ihre Situation analysieren <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
 
 <!-- ============ PAIN POINT ANALYSE ============ -->
 <section id="pain-points">
@@ -634,6 +798,24 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== Commitment-Feld ===== -->
+    <div class="commitment-wrap">
+      <div class="commitment-card">
+        <div class="commitment-hdr">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="rv-eyebrow" style="color:rgba(255,255,255,.75);margin:0">Das entscheidende Kriterium</span>
+        </div>
+        <h3>Was muss unser gemeinsamer Plan leisten?</h3>
+        <p>Bitte vervollständigen Sie — bevor wir die Analyse auswerten — diesen Satz. Ihre Antwort begleitet uns durch alle weiteren Schritte und erscheint im gedruckten Plan.</p>
+        <div class="cs-sentence">
+          <div class="cs-prompt">„Wenn unser WertschätzungsPlan mir zeigt, dass er …"</div>
+          <textarea id="commitment-text" rows="3" placeholder="z. B.: … unsere Fehlzeiten nachweislich senkt, unter 35 € netto/MA/Monat bleibt und innerhalb von 6 Wochen eingerichtet ist …"></textarea>
+          <div class="cs-closing">„… dann setzen wir das in die Tat um."</div>
+        </div>
+        <p class="commitment-note">Dieses Feld kann leer bleiben — es macht die Beratung aber deutlich zielgerichteter.</p>
       </div>
     </div>
 
@@ -831,6 +1013,7 @@ footer.site{background:var(--rv-blue-900);color:#fff;margin-top:0;}
             <div class="sp-row"><span>Bausteine</span><span id="success-products">—</span></div>
             <div class="sp-row"><span>Stufe</span><span id="success-tier">—</span></div>
             <div class="sp-row"><span>Netto-Investition</span><span id="success-cost">—</span></div>
+            <div class="sp-row" id="success-commitment-row" style="display:none"><span>Ihr Kriterium</span><span id="success-commitment" style="font-style:italic;font-size:11px">—</span></div>
           </div>
         </div>
       </div>
@@ -1572,6 +1755,16 @@ function updateSummary(){
   if(window._investJahrNetto && window._investMA > 0){
     rows.push('<li class="summary-cost summary-cost--total"><span>Gesamt netto/Jahr ('+window._investMA+' MA)</span><span class="tnum">'+fmtE(window._investJahrNetto)+'</span></li>');
   }
+  /* Commitment text */
+  var commitText = (document.getElementById('commitment-text') || {}).value || '';
+  if(commitText.trim()){
+    rows.push('<li class="summary-commitment summary-prod">'+
+      '<div style="display:flex;flex-direction:column;gap:4px;width:100%">'+
+        '<span class="commitment-q" style="font-size:11px;opacity:.7">Ihr Entscheidungskriterium:</span>'+
+        '<span class="commitment-a" style="font-style:italic;font-size:13px">„… '+commitText.trim()+' …  dann setzen wir das um."</span>'+
+      '</div>'+
+    '</li>');
+  }
   list.innerHTML = rows.join('');
 }
 
@@ -1720,6 +1913,12 @@ function submitClosing(evt){
   set('success-products', prods || '—');
   set('success-tier',     t.name);
   set('success-cost',     costStr);
+  var commitment = ((document.getElementById('commitment-text') || {}).value || '').trim();
+  if(commitment){
+    set('success-commitment', '„… '+commitment+' … dann setzen wir das um."');
+    var cr = document.getElementById('success-commitment-row');
+    if(cr) cr.style.display = '';
+  }
   document.getElementById('form-view').style.display = 'none';
   document.getElementById('success-view').classList.add('show');
   set('success-name', name ? ', '+name.split(' ')[0] : '');
@@ -1738,6 +1937,16 @@ selectTier('premium');
 updatePlanChip();
 updateSummary();
 updateHerz();
+
+/* ------ Maschinen-Metapher: animate on scroll-into-view ------ */
+(function(){
+  var wrap = document.getElementById('metapher-wrap');
+  if(!wrap) return;
+  var io = new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){ wrap.classList.add('visible'); io.disconnect(); }
+  }, { threshold: 0.15 });
+  io.observe(wrap);
+})();
 
 /* ------ Scroll-driven step progress (only advances, never regresses) ------ */
 (function(){
