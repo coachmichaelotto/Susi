@@ -1662,6 +1662,30 @@ function ruerupSliderSync(){
   if(jEl)jEl.textContent=(v*12).toLocaleString('de-DE')+' €';
   ruerupCalc();
 }
+function calcPolicenwert(beitragMonat,n_jahre,r_annual){
+  // Kalibriert an 5 echten R+V VR-RürupRente-Angeboten (Tarif FA, UniESG Aktien Global)
+  // Kostenquote-Regression (actual/naiveFV): ratio = 0,9553 - 0,00314 × n
+  const r_mon=Math.pow(1+r_annual,1/12)-1;
+  const N=n_jahre*12;
+  if(r_mon===0)return beitragMonat*N*Math.max(0.72,0.9553-0.00314*n_jahre);
+  const naiveFV=beitragMonat*((Math.pow(1+r_mon,N)-1)/r_mon);
+  const costRatio=Math.max(0.72,0.9553-0.00314*n_jahre);
+  return naiveFV*costRatio;
+}
+function rentenfaktor(year){
+  // Aus 5 echten R+V-Angeboten: Grimm 2037→32,11; S.Aliti 2040→32,64;
+  // Manzel 2041→32,49; Nissen 2045→31,89; xx Aliti 2062→29,67
+  const a=[[2037,32.11],[2040,32.64],[2041,32.49],[2045,31.89],[2062,29.67]];
+  if(year<=a[0][0])return a[0][1];
+  if(year>=a[a.length-1][0])return a[a.length-1][1];
+  for(let i=0;i<a.length-1;i++){
+    if(year>=a[i][0]&&year<=a[i+1][0]){
+      const t=(year-a[i][0])/(a[i+1][0]-a[i][0]);
+      return a[i][1]+t*(a[i+1][1]-a[i][1]);
+    }
+  }
+  return 30;
+}
 function ruerupCalc(){
   const slider=document.getElementById('ruerup-slider');if(!slider)return;
   const beitragM=+slider.value||200;
@@ -1702,18 +1726,37 @@ function ruerupCalc(){
   const nettoM=beitragM-steuerM;
   const smEl=document.getElementById('rr-steuersparn-m');if(smEl)smEl.textContent='−'+Math.round(steuerM).toLocaleString('de-DE')+' €';
   const nmEl=document.getElementById('rr-netto-m');if(nmEl)nmEl.textContent=Math.round(nettoM).toLocaleString('de-DE')+' €';
-  // ── Rentenberechnung Basis (3 % p.a. Anspar, 2,5 % p.a. Bezug über 20 J.)
+  // ── Rentenberechnung – kalibrierter Rechenkern (R+V Tarif FA, 5 echte Angebote)
   const n=rentenbeginn-alter;
-  const r=0.03;const rvRate=0.025/12;const nv=240;
-  const kapital=beitragJ*((Math.pow(1+r,n)-1)/r)*(1+r);
-  const renteM=kapital*rvRate/(1-Math.pow(1+rvRate,-nv));
+  const rb_year=2026+n;
+  const rf=rentenfaktor(rb_year);
+  const PW3=calcPolicenwert(beitragM,n,0.03);
+  const PW6=calcPolicenwert(beitragM,n,0.06);
+  const PW9=calcPolicenwert(beitragM,n,0.09);
+  const kapital=PW6;
+  const renteM3=rf*PW3/10000;
+  const renteM=rf*PW6/10000;
+  const renteM9=rf*PW9/10000;
   const rMR=Math.round(renteM);
   const rRA=document.getElementById('rr-renten-alter');if(rRA)rRA.textContent=rentenbeginn;
   const rRM=document.getElementById('rr-rente-m');if(rRM)rRM.textContent=rMR.toLocaleString('de-DE')+' €';
   const kapRnd=Math.round(kapital/1000)*1000;
   const h=document.getElementById('rr-hinweis-kap');
   const deckelHinweis=beitragJ>deckel_verfuegbar?` <span style="color:var(--rv-orange-400);font-weight:700">(steuerl. Deckel: ${Math.round(deckel_verfuegbar/12).toLocaleString('de-DE')} €/Mon.)</span>`:'';
-  if(h)h.innerHTML=`Bei <b>${beitragM.toLocaleString('de-DE')} €/Mon.</b>${deckelHinweis} × <b>${n} Jahre</b> Ansparzeit (3&nbsp;% p.a.) entsteht ein Kapital von ca. <b>${kapRnd.toLocaleString('de-DE')} €</b>. Das Finanzamt übernimmt über die gesamte Laufzeit ca. <b>${Math.round(steuerJ*n).toLocaleString('de-DE')} €</b> – Ihr effektiver Eigenanteil sinkt entsprechend.`;
+  const szStr=`<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <div style="flex:1;min-width:80px;background:var(--rv-gray-100,#f3f3f3);border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:var(--fg-muted)">3 % p.a.</div>
+      <div style="font-size:13px;font-weight:900;color:var(--rv-blue-900)">${Math.round(renteM3).toLocaleString('de-DE')} €/Mon.</div>
+      <div style="font-size:10px;color:var(--fg-muted)">${(Math.round(PW3/1000)*1000).toLocaleString('de-DE')} € Policenwert</div></div>
+    <div style="flex:1;min-width:80px;background:var(--rv-blue-900);border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:var(--rv-green-400)">6 % p.a. ★</div>
+      <div style="font-size:13px;font-weight:900;color:#fff">${rMR.toLocaleString('de-DE')} €/Mon.</div>
+      <div style="font-size:10px;color:#9fb0d6">${kapRnd.toLocaleString('de-DE')} € Policenwert</div></div>
+    <div style="flex:1;min-width:80px;background:var(--rv-gray-100,#f3f3f3);border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:var(--fg-muted)">9 % p.a.</div>
+      <div style="font-size:13px;font-weight:900;color:var(--rv-blue-900)">${Math.round(renteM9).toLocaleString('de-DE')} €/Mon.</div>
+      <div style="font-size:10px;color:var(--fg-muted)">${(Math.round(PW9/1000)*1000).toLocaleString('de-DE')} € Policenwert</div></div></div>`;
+  if(h)h.innerHTML=`Bei <b>${beitragM.toLocaleString('de-DE')} €/Mon.</b>${deckelHinweis} × <b>${n} Jahre</b> Ansparzeit entsteht bei 6&nbsp;% ein Policenwert von ca. <b>${kapRnd.toLocaleString('de-DE')} €</b>. Rentenfaktor ${rb_year}: <b>${rf.toFixed(2)}</b> (R+V-Tarif FA). Das Finanzamt übernimmt ca. <b>${Math.round(steuerJ*n).toLocaleString('de-DE')} €</b> über die Laufzeit.${szStr}`;
   // ── Gesamtbilanz
   if(detDiv)detDiv.style.display='';
   const totalBrutto=Math.round(beitragJ*n);
@@ -1735,8 +1778,8 @@ function ruerupCalc(){
   else{steuerJ_rein=cap_rein*rate;beitragJ_rein=absetzbar+steuerJ_rein;}
   const beitragM_rein=beitragJ_rein/12;
   const steuerM_rein=steuerJ_rein/12;
-  const kapital_rein=beitragJ_rein*((Math.pow(1+r,n)-1)/r)*(1+r);
-  const renteM_rein=kapital_rein*rvRate/(1-Math.pow(1+rvRate,-nv));
+  const kapital_rein=calcPolicenwert(beitragJ_rein/12,n,0.06);
+  const renteM_rein=rf*kapital_rein/10000;
   // ── Meilensteine
   const mEl=document.getElementById('rr-meilensteine');
   if(mEl)mEl.innerHTML=buildMeilensteine(n,beitragJ,steuerJ,steuerJ_rein);
@@ -1780,7 +1823,7 @@ function ruerupCalc(){
       <div style="background:var(--rv-green-100);border-radius:var(--radius-md);padding:14px;text-align:center">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-green-700);letter-spacing:.06em">Rürup-Rente ab ${rentenbeginn}</div>
         <div style="font-size:20px;font-weight:900;color:var(--rv-green-700);margin-top:4px">${activeRMR.toLocaleString('de-DE')} €/Mon.</div>
-        <div style="font-size:10px;color:var(--fg-muted)">geschätzt, 3 % p.a.</div></div>
+        <div style="font-size:10px;color:var(--fg-muted)">Hochrechnung 6 % p.a. (R+V)</div></div>
       <div style="background:var(--rv-blue-900);border-radius:var(--radius-md);padding:14px;text-align:center">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-green-400);letter-spacing:.06em">PKV gedeckt</div>
         <div style="font-size:20px;font-weight:900;color:#fff;margin-top:4px">${deckPct} %</div>
