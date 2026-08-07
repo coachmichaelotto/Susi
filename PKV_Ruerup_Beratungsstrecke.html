@@ -717,6 +717,53 @@ table.cmp td.rowlbl{font-weight:700;background:var(--rv-gray-100)}
           <span class="ic">i</span>
           <div id="rr-hinweis-kap">Einkommen und Alter eingeben, um die Berechnung zu starten.</div>
         </div>
+        <!-- Steuerdetail: Gesamtbilanz + Meilensteine + Reinvestition -->
+        <div id="rr-steuer-detail" style="display:none;margin-top:20px">
+          <div style="margin-bottom:16px">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--rv-blue-900);margin-bottom:10px">Gesamtbilanz über die Ansparzeit</div>
+            <div class="grid c3">
+              <div style="background:var(--rv-gray-100);border-radius:var(--radius-md);padding:14px;text-align:center">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--fg-muted);letter-spacing:.06em">Bruttobeiträge gesamt</div>
+                <div id="rr-total-brutto" style="font-size:19px;font-weight:900;color:var(--rv-blue-900);margin-top:4px">–</div>
+                <div style="font-size:10px;color:var(--fg-muted)">über Ansparzeit</div>
+              </div>
+              <div style="background:var(--rv-green-100);border-radius:var(--radius-md);padding:14px;text-align:center">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-green-700);letter-spacing:.06em">Steuererstattung gesamt</div>
+                <div id="rr-total-steuer" style="font-size:19px;font-weight:900;color:var(--rv-green-700);margin-top:4px">–</div>
+                <div style="font-size:10px;color:var(--fg-muted)">vom Finanzamt</div>
+              </div>
+              <div style="background:var(--rv-cream);border-radius:var(--radius-md);padding:14px;text-align:center">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-brown-700);letter-spacing:.06em">Netto-Eigenanteil</div>
+                <div id="rr-total-eigen" style="font-size:19px;font-weight:900;color:var(--rv-blue-900);margin-top:4px">–</div>
+                <div style="font-size:10px;color:var(--fg-muted)">Ihr tatsächlicher Aufwand</div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div style="font-size:10px;color:var(--fg-muted);margin-bottom:4px">Wer finanziert was?</div>
+              <div style="height:26px;border-radius:var(--radius-pill);overflow:hidden;display:flex">
+                <div id="rr-bar-eigen" style="background:var(--rv-blue-900);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;transition:flex-basis .4s;flex-basis:60%;min-width:0;overflow:hidden;white-space:nowrap"></div>
+                <div id="rr-bar-staat" style="background:var(--rv-green-700);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;transition:flex-basis .4s;flex-basis:40%;min-width:0;overflow:hidden;white-space:nowrap"></div>
+              </div>
+              <div style="display:flex;gap:14px;margin-top:5px;font-size:10px;color:var(--fg-muted)">
+                <span><span style="display:inline-block;width:9px;height:9px;background:var(--rv-blue-900);border-radius:2px;margin-right:3px;vertical-align:middle"></span>Ihr Eigenanteil</span>
+                <span><span style="display:inline-block;width:9px;height:9px;background:var(--rv-green-700);border-radius:2px;margin-right:3px;vertical-align:middle"></span>Finanzamt-Anteil</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--rv-blue-900);margin-bottom:8px">Kumulierte Steuererstattung im Zeitverlauf</div>
+            <div id="rr-meilensteine" style="overflow-x:auto"></div>
+          </div>
+          <div style="background:var(--rv-blue-900);border-radius:var(--radius-md);padding:16px;margin-bottom:16px">
+            <div style="color:#fff;font-size:13px;font-weight:700;margin-bottom:6px">Steuererstattung reinvestieren?</div>
+            <div style="color:#9fb0d6;font-size:12px;margin-bottom:12px">Das Finanzamt zahlt jährlich einen Teil der Beiträge zurück. Wer diese Erstattung direkt wieder in den Rürup-Vertrag einzahlt, erzielt eine deutlich höhere Rente – bei <b style="color:#fff">gleichem Netto-Eigenanteil</b>.</div>
+            <div class="optset" id="ruerup-rein-set" style="background:rgba(255,255,255,.08);border-radius:var(--radius-md);padding:4px;display:flex;gap:4px">
+              <button class="opt" data-val="nein" style="flex:1">Nein</button>
+              <button class="opt" data-val="ja" style="flex:1">Ja – reinvestieren</button>
+            </div>
+          </div>
+          <div id="rr-rein-vergleich"></div>
+        </div>
       </div>
 
       <div class="card">
@@ -1292,6 +1339,7 @@ function bindOptsets(){
       b.onclick=()=>{set.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
         state.opts[set.id]=b.dataset.val;
         if(set.id==='status-set')statusChange(b.dataset.val);
+        if(set.id==='ruerup-rein-set'||set.id==='ruerup-kirche-set')setTimeout(ruerupCalc,0);
         save();};
     });
   });
@@ -1611,18 +1659,20 @@ function ruerupCalc(){
   const rentenbeginn=+document.getElementById('ruerup-rentenbeginn').value||67;
   const kirche=state.opts['ruerup-kirche-set']==='ja';
   const pkvZiel=+document.getElementById('pkv-beitrag-ziel').value||0;
-  const MAX_J=31100; // Höchstbetrag Rürup 2026 (Näherung)
+  const MAX_J=31100;
   const maxLbl=document.getElementById('ruerup-max-label');
   if(maxLbl)maxLbl.textContent=Math.round(MAX_J/12).toLocaleString('de-DE')+' €/Mon.';
   const jEl=document.getElementById('rr-jahres');if(jEl)jEl.textContent=beitragJ.toLocaleString('de-DE')+' €';
+  const detDiv=document.getElementById('rr-steuer-detail');
   if(!brutto||!alter||alter>=rentenbeginn){
     ['rr-steuersparn-m','rr-netto-m','rr-rente-m'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='–';});
     const h=document.getElementById('rr-hinweis-kap');if(h)h.innerHTML='Bitte Einkommen, Alter und Rentenbeginn eingeben.';
+    if(detDiv)detDiv.style.display='none';
     return;
   }
-  // Steuerberechnung
+  // ── Steuerberechnung (ohne Reinvestition)
   const absetzbar=Math.min(beitragJ,MAX_J);
-  const pausch=1230; // Arbeitnehmer-Pauschbetrag
+  const pausch=1230;
   const zvEohne=Math.max(0,brutto-pausch);
   const zvEmit=Math.max(0,brutto-pausch-absetzbar);
   const gstEff=(grenzSteuersatz(zvEohne)+grenzSteuersatz(zvEmit))/2;
@@ -1630,36 +1680,69 @@ function ruerupCalc(){
   const steuerJ=absetzbar*gstEff*kiSt;
   const steuerM=steuerJ/12;
   const nettoM=beitragM-steuerM;
-  const smEl=document.getElementById('rr-steuersparn-m');if(smEl)smEl.textContent='–'+Math.round(steuerM).toLocaleString('de-DE')+' €';
+  const smEl=document.getElementById('rr-steuersparn-m');if(smEl)smEl.textContent='−'+Math.round(steuerM).toLocaleString('de-DE')+' €';
   const nmEl=document.getElementById('rr-netto-m');if(nmEl)nmEl.textContent=Math.round(nettoM).toLocaleString('de-DE')+' €';
-  // Rentenberechnung (3 % p.a. Anspar, 2,5 % p.a. Rentenbezug über 20 J.)
+  // ── Rentenberechnung Basis (3 % p.a. Anspar, 2,5 % p.a. Bezug über 20 J.)
   const n=rentenbeginn-alter;
-  const kapital=beitragM*12*((Math.pow(1.03,n)-1)/0.03)*1.03;
-  const rv=0.025/12;const nv=240;
+  const r=0.03;const rv=0.025/12;const nv=240;
+  const kapital=beitragJ*((Math.pow(1+r,n)-1)/r)*(1+r);
   const renteM=kapital*rv/(1-Math.pow(1+rv,-nv));
   const rMR=Math.round(renteM);
   const rRA=document.getElementById('rr-renten-alter');if(rRA)rRA.textContent=rentenbeginn;
   const rRM=document.getElementById('rr-rente-m');if(rRM)rRM.textContent=rMR.toLocaleString('de-DE')+' €';
   const kapRnd=Math.round(kapital/1000)*1000;
   const h=document.getElementById('rr-hinweis-kap');
-  if(h)h.innerHTML=`Bei <b>${beitragM.toLocaleString('de-DE')} €/Mon.</b> × <b>${n} Jahre</b> Ansparzeit (3&nbsp;% p.a.) entsteht ein Kapital von ca. <b>${kapRnd.toLocaleString('de-DE')} €</b>. Das Finanzamt übernimmt davon ca. <b>${Math.round(steuerM*n*12).toLocaleString('de-DE')} €</b> über die gesamte Laufzeit – Ihr effektiver Eigenanteil sinkt entsprechend.`;
-  // Brücken-Visualisierung
-  const bc=document.getElementById('rr-bridge-content');if(!bc)return;
+  if(h)h.innerHTML=`Bei <b>${beitragM.toLocaleString('de-DE')} €/Mon.</b> × <b>${n} Jahre</b> Ansparzeit (3&nbsp;% p.a.) entsteht ein Kapital von ca. <b>${kapRnd.toLocaleString('de-DE')} €</b>. Das Finanzamt übernimmt über die gesamte Laufzeit ca. <b>${Math.round(steuerJ*n).toLocaleString('de-DE')} €</b> – Ihr effektiver Eigenanteil sinkt entsprechend.`;
+  // ── Gesamtbilanz
+  if(detDiv)detDiv.style.display='';
+  const totalBrutto=Math.round(beitragJ*n);
+  const totalSteuer=Math.round(steuerJ*n);
+  const totalEigen=totalBrutto-totalSteuer;
+  const el_tb=document.getElementById('rr-total-brutto');if(el_tb)el_tb.textContent=totalBrutto.toLocaleString('de-DE')+' €';
+  const el_ts=document.getElementById('rr-total-steuer');if(el_ts)el_ts.textContent=totalSteuer.toLocaleString('de-DE')+' €';
+  const el_te=document.getElementById('rr-total-eigen');if(el_te)el_te.textContent=totalEigen.toLocaleString('de-DE')+' €';
+  const eigenPct=Math.round(totalEigen/totalBrutto*100);
+  const staatPct=100-eigenPct;
+  const barE=document.getElementById('rr-bar-eigen');const barS=document.getElementById('rr-bar-staat');
+  if(barE){barE.style.flexBasis=eigenPct+'%';barE.textContent=eigenPct+'% Sie';}
+  if(barS){barS.style.flexBasis=staatPct+'%';barS.textContent=staatPct+'% Staat';}
+  // ── Reinvestitions-Berechnung (konvergente Formel)
+  const rate=gstEff*kiSt;
+  let beitragJ_rein,steuerJ_rein;
+  if(beitragJ/(1-rate)<=MAX_J){beitragJ_rein=beitragJ/(1-rate);steuerJ_rein=beitragJ_rein*rate;}
+  else{steuerJ_rein=MAX_J*rate;beitragJ_rein=beitragJ+steuerJ_rein;}
+  const beitragM_rein=beitragJ_rein/12;
+  const steuerM_rein=steuerJ_rein/12;
+  const kapital_rein=beitragJ_rein*((Math.pow(1+r,n)-1)/r)*(1+r);
+  const renteM_rein=kapital_rein*rv/(1-Math.pow(1+rv,-nv));
+  // ── Meilensteine
+  const mEl=document.getElementById('rr-meilensteine');
+  if(mEl)mEl.innerHTML=buildMeilensteine(n,beitragJ,steuerJ,steuerJ_rein);
+  // ── Reinvestitions-Vergleich
+  const reinJa=state.opts['ruerup-rein-set']==='ja';
+  const rvEl=document.getElementById('rr-rein-vergleich');
+  if(rvEl)rvEl.innerHTML=buildReinVergleich(beitragM,steuerM,nettoM,renteM,beitragM_rein,steuerM_rein,renteM_rein,rentenbeginn,reinJa);
+  // ── Aktive Rente für Brücke (je nach Toggle)
+  const activeRenteM=reinJa?renteM_rein:renteM;
+  const activeRMR=Math.round(activeRenteM);
+  // ── Brücken-Visualisierung
+  const bc=document.getElementById('rr-bridge-content');if(!bc){save();return;}
   if(!pkvZiel){bc.innerHTML='<div class="callout warn"><span class="ic">!</span><div>PKV-Zielbeitrag oben (Karte A) eingeben, um die Deckungsquote zu sehen.</div></div>';save();return;}
-  const deckPct=Math.round(renteM/pkvZiel*100);
-  const barW=Math.min(100,renteM/pkvZiel*100);
+  const deckPct=Math.round(activeRenteM/pkvZiel*100);
+  const barW=Math.min(100,activeRenteM/pkvZiel*100);
   const barCol=deckPct>=100?'var(--rv-green-700)':deckPct>=60?'var(--rv-orange-400)':'var(--rv-red-600)';
   const callCls=deckPct>=100?'ok':deckPct>=60?'':'warn';
   const callIc=deckPct>=100?'✓':deckPct>=60?'i':'!';
+  const reinBadge=reinJa?' <span style="font-size:10px;background:var(--rv-green-700);color:#fff;border-radius:var(--radius-pill);padding:1px 7px;font-weight:600">+Reinvestition</span>':'';
   const callTxt=deckPct>=100
-    ?`<b>Vollständige Deckung:</b> Die Rürup-Rente von <b>${rMR.toLocaleString('de-DE')} €/Mon.</b> übersteigt den PKV-Beitrag (<b>${pkvZiel.toLocaleString('de-DE')} €/Mon.</b>). Heutiger Netto-Eigenanteil nach Steuer: nur <b>${Math.round(nettoM).toLocaleString('de-DE')} €/Mon.</b>`
+    ?`<b>Vollständige Deckung:</b> Die Rürup-Rente von <b>${activeRMR.toLocaleString('de-DE')} €/Mon.</b> übersteigt den PKV-Beitrag (<b>${pkvZiel.toLocaleString('de-DE')} €/Mon.</b>). Netto-Eigenanteil heute: nur <b>${Math.round(nettoM).toLocaleString('de-DE')} €/Mon.</b>`
     :deckPct>=60
-    ?`<b>Deutliche Entlastung:</b> Die Rürup-Rente deckt <b>${deckPct}&nbsp;%</b> des PKV-Beitrags. Fehlbetrag im Alter: ca. <b>${Math.round(pkvZiel-renteM).toLocaleString('de-DE')} €/Mon.</b> – durch BEK oder höheren Beitrag schließbar.`
+    ?`<b>Deutliche Entlastung:</b> Die Rürup-Rente deckt <b>${deckPct}&nbsp;%</b> des PKV-Beitrags. Fehlbetrag im Alter: ca. <b>${Math.round(pkvZiel-activeRenteM).toLocaleString('de-DE')} €/Mon.</b> – durch BEK oder höheren Beitrag schließbar.`
     :`<b>Solider Grundstein:</b> Aktuell <b>${deckPct}&nbsp;%</b> Deckung. Beitrag oder Laufzeit erhöhen, um die Brücke zu vervollständigen.`;
   bc.innerHTML=`
     <div style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;font-weight:700;color:var(--rv-blue-900)">
-        <span>Rürup-Monatsrente</span><span>${rMR.toLocaleString('de-DE')} €</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px;font-weight:700;color:var(--rv-blue-900)">
+        <span>Rürup-Monatsrente${reinBadge}</span><span>${activeRMR.toLocaleString('de-DE')} €</span></div>
       <div style="position:relative;height:30px;background:var(--rv-gray-200);border-radius:var(--radius-pill);overflow:hidden">
         <div style="position:absolute;left:0;top:0;bottom:0;width:${barW}%;background:${barCol};border-radius:var(--radius-pill);transition:.4s ease"></div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:${deckPct>=40?'#fff':'var(--rv-blue-900)'}">
@@ -1674,13 +1757,69 @@ function ruerupCalc(){
         <div style="font-size:10px;color:var(--fg-muted)">nach Steuererstattung</div></div>
       <div style="background:var(--rv-green-100);border-radius:var(--radius-md);padding:14px;text-align:center">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-green-700);letter-spacing:.06em">Rürup-Rente ab ${rentenbeginn}</div>
-        <div style="font-size:20px;font-weight:900;color:var(--rv-green-700);margin-top:4px">${rMR.toLocaleString('de-DE')} €/Mon.</div>
+        <div style="font-size:20px;font-weight:900;color:var(--rv-green-700);margin-top:4px">${activeRMR.toLocaleString('de-DE')} €/Mon.</div>
         <div style="font-size:10px;color:var(--fg-muted)">geschätzt, 3 % p.a.</div></div>
       <div style="background:var(--rv-blue-900);border-radius:var(--radius-md);padding:14px;text-align:center">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-green-400);letter-spacing:.06em">PKV gedeckt</div>
         <div style="font-size:20px;font-weight:900;color:#fff;margin-top:4px">${deckPct} %</div>
         <div style="font-size:10px;color:#9fb0d6">der Kosten im Ruhestand</div></div></div>`;
   save();
+}
+
+/* ── Rürup-Hilfs­funktionen ── */
+function buildMeilensteine(n_total, beitragJ_base, steuerJ_base, steuerJ_rein){
+  const raw=[1,3,5,10,15,n_total];
+  const ms=[...new Set(raw.filter(y=>y>=1&&y<=n_total))].sort((a,b)=>a-b);
+  const hdr=`<tr style="background:var(--rv-blue-900);color:#fff;font-size:11px">
+    <th style="padding:7px 10px;text-align:left;font-weight:600;white-space:nowrap">Jahr</th>
+    <th style="padding:7px 10px;text-align:right;font-weight:600">Kum. Eigenanteil</th>
+    <th style="padding:7px 10px;text-align:right;font-weight:600;background:rgba(63,119,23,.85)">Kum. Steuererstattung</th>
+    <th style="padding:7px 10px;text-align:right;font-weight:600">… mit Reinvestition</th></tr>`;
+  const rows=ms.map((y,i)=>{
+    const last=i===ms.length-1;
+    const cumEigen=Math.round((beitragJ_base-steuerJ_base)*y);
+    const cumSteuer=Math.round(steuerJ_base*y);
+    const cumRein=Math.round(steuerJ_rein*y);
+    const diffRein=cumRein-cumSteuer;
+    const bg=last?'var(--rv-cream)':i%2===1?'var(--rv-gray-50,#f9f9f9)':'';
+    const fw=last?'700':'400';
+    const lbl=y===n_total?`${y} <small style="color:var(--fg-muted);font-weight:400">(Rentenbeginn)</small>`:`${y}`;
+    return `<tr style="${bg?'background:'+bg+';':''}font-weight:${fw};font-size:12px">
+      <td style="padding:6px 10px">${lbl}</td>
+      <td style="padding:6px 10px;text-align:right">${cumEigen.toLocaleString('de-DE')} €</td>
+      <td style="padding:6px 10px;text-align:right;color:var(--rv-green-700);font-weight:${last?'900':'600'}">${cumSteuer.toLocaleString('de-DE')} €</td>
+      <td style="padding:6px 10px;text-align:right;color:var(--rv-green-700);font-weight:${last?'900':'600'}">${cumRein.toLocaleString('de-DE')} €${diffRein>0&&last?` <small style="color:var(--fg-muted);font-weight:400">(+${diffRein.toLocaleString('de-DE')} €)</small>`:''}</td></tr>`;
+  }).join('');
+  return `<table style="width:100%;border-collapse:collapse;border-radius:var(--radius-md);overflow:hidden"><thead>${hdr}</thead><tbody>${rows}</tbody></table>`;
+}
+
+function buildReinVergleich(beitragM_base, steuerM_base, nettoM_base, renteM_base, beitragM_rein, steuerM_rein, renteM_rein, rentenbeginn, reinJa){
+  const renteDiff=Math.round(renteM_rein-renteM_base);
+  const rentePct=renteM_base>0?Math.round((renteM_rein/renteM_base-1)*100):0;
+  const selOhne=!reinJa?';outline:2px solid var(--rv-blue-900);outline-offset:2px':'';
+  const selMit=reinJa?';outline:2px solid var(--rv-green-400);outline-offset:2px':'';
+  const row=(lbl,val,sub,bold,grn,light)=>
+    `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;${grn?'border-top:1px solid '+(light?'rgba(255,255,255,.15)':'var(--border)')+';margin-top:4px;padding-top:8px':''}">
+      <span style="font-size:12px;color:${light?(grn?'rgba(255,255,255,.7)':'#9fb0d6'):'var(--fg-muted)'}">${lbl}</span>
+      <b style="font-size:13px;color:${grn?(light?'var(--rv-green-400)':'var(--rv-green-700)'):(light?'#fff':'var(--rv-blue-900)')};font-weight:${bold?'900':'600'}">${val}</b>
+    </div>`;
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+    <div style="background:var(--rv-gray-100);border-radius:var(--radius-md);padding:16px${selOhne}">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-muted);margin-bottom:10px">Ohne Reinvestition</div>
+      ${row('Monatsbeitrag',Math.round(beitragM_base).toLocaleString('de-DE')+' €',null,false,false,false)}
+      ${row('Steuererstattung','−'+Math.round(steuerM_base).toLocaleString('de-DE')+' €',null,false,true,false)}
+      ${row('Ihr Eigenanteil',Math.round(nettoM_base).toLocaleString('de-DE')+' €/Mon.',null,true,false,false)}
+      ${row('Rürup-Rente ab '+rentenbeginn,Math.round(renteM_base).toLocaleString('de-DE')+' €/Mon.',null,true,false,false)}
+    </div>
+    <div style="background:var(--rv-blue-900);border-radius:var(--radius-md);padding:16px${selMit}">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--rv-green-400);margin-bottom:10px">Mit Reinvestition ✓</div>
+      ${row('Monatsbeitrag',Math.round(beitragM_rein).toLocaleString('de-DE')+' €',null,false,false,true)}
+      ${row('Steuererstattung','−'+Math.round(steuerM_rein).toLocaleString('de-DE')+' €',null,false,true,true)}
+      ${row('Ihr Eigenanteil',Math.round(nettoM_base).toLocaleString('de-DE')+' €/Mon.',null,true,false,true)}
+      ${row('Rürup-Rente ab '+rentenbeginn,Math.round(renteM_rein).toLocaleString('de-DE')+' €/Mon.',null,true,true,true)}
+    </div>
+  </div>
+  ${renteDiff>0?`<div class="callout ok" style="margin-top:10px"><span class="ic">✓</span><div>Durch Reinvestition der Steuererstattung steigt die monatliche Rürup-Rente um <b>${renteDiff.toLocaleString('de-DE')} €</b> (+${rentePct}&nbsp;%) – bei <b>gleichem Netto-Eigenanteil</b> von ${Math.round(nettoM_base).toLocaleString('de-DE')} €/Mon.</div></div>`:''}`;
 }
 
 /* ============ Risikoprüfung: Fragen ============ */
