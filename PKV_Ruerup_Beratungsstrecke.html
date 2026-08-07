@@ -671,7 +671,19 @@ table.cmp td.rowlbl{font-weight:700;background:var(--rv-gray-100)}
               <option value="3">III · verheiratet, Alleinverdiener</option>
             </select>
           </div>
+          <div class="field">
+            <label>Beschäftigungsstatus</label>
+            <div class="optset" id="ruerup-status-set">
+              <button class="opt sel" data-val="angestellt">Angestellt</button>
+              <button class="opt" data-val="selbstaendig">Selbständig</button>
+            </div>
+          </div>
+          <div class="field" id="rr-abzuege-wrap">
+            <label>Weitere Basisversorgung <span class="sub">Versorgungswerk, freiwillige GRV, Beamtenversorgung etc.</span></label>
+            <input type="number" id="ruerup-abzuege" placeholder="EUR / Jahr (optional)" oninput="ruerupCalc()">
+          </div>
         </div>
+        <div id="rr-deckel-info" style="display:none;margin-top:14px"></div>
       </div>
 
       <div class="card">
@@ -1339,7 +1351,7 @@ function bindOptsets(){
       b.onclick=()=>{set.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
         state.opts[set.id]=b.dataset.val;
         if(set.id==='status-set')statusChange(b.dataset.val);
-        if(set.id==='ruerup-rein-set'||set.id==='ruerup-kirche-set')setTimeout(ruerupCalc,0);
+        if(set.id==='ruerup-rein-set'||set.id==='ruerup-kirche-set'||set.id==='ruerup-status-set')setTimeout(ruerupCalc,0);
         save();};
     });
   });
@@ -1416,7 +1428,7 @@ const FIELDS=["brutto-jahr","beihilfe-status","beihilfe-satz","ist-versicherung"
  "p-anrede","p-vorname","p-nachname","p-gebdat","p-beruf","p-plz","p-ort","p-strasse","p-tel","p-mail","p-groesse","p-gewicht",
  "kt-satz","kt-beginn","bek-betrag","baustein-notiz",
  "r-groesse","r-gewicht","risk-notiz",
- "pkv-beitrag-ziel","ruerup-brutto","ruerup-alter","ruerup-rentenbeginn","ruerup-slider","ruerup-stk","ruerup-beitrag-final","ruerup-notiz"];
+ "pkv-beitrag-ziel","ruerup-brutto","ruerup-alter","ruerup-rentenbeginn","ruerup-slider","ruerup-stk","ruerup-abzuege","ruerup-beitrag-final","ruerup-notiz"];
 const CHECKS=["kt-an","ppv","bek-an","opt-tarifwechsel","opt-entsendung"];
 function save(){
   const d={cur,tarif:state.tarif,sb:state.sb,family:state.family,myths:state.myths,opts:state.opts,
@@ -1659,19 +1671,27 @@ function ruerupCalc(){
   const rentenbeginn=+document.getElementById('ruerup-rentenbeginn').value||67;
   const kirche=state.opts['ruerup-kirche-set']==='ja';
   const pkvZiel=+document.getElementById('pkv-beitrag-ziel').value||0;
+  const status=state.opts['ruerup-status-set']||'angestellt';
+  const abzuege=+document.getElementById('ruerup-abzuege').value||0;
   const MAX_J=31100;
+  const BBG=90600; // RV-Beitragsbemessungsgrenze West 2026
+  // AN+AG-Anteil GRV je 9,25 % = 18,5 % gesamt; beide Hälften reduzieren den Rürup-Deckel (§ 10 Abs. 3 EStG)
+  const rvJ=status==='angestellt'?Math.min(brutto,BBG)*0.185:0;
+  const deckel_sonstige=rvJ+abzuege;
+  const deckel_verfuegbar=Math.max(0,MAX_J-deckel_sonstige);
   const maxLbl=document.getElementById('ruerup-max-label');
-  if(maxLbl)maxLbl.textContent=Math.round(MAX_J/12).toLocaleString('de-DE')+' €/Mon.';
+  if(maxLbl)maxLbl.textContent=Math.round(deckel_verfuegbar/12).toLocaleString('de-DE')+' €/Mon.';
   const jEl=document.getElementById('rr-jahres');if(jEl)jEl.textContent=beitragJ.toLocaleString('de-DE')+' €';
   const detDiv=document.getElementById('rr-steuer-detail');
+  updateDeckelInfo(rvJ,abzuege,beitragJ,deckel_verfuegbar,MAX_J,status);
   if(!brutto||!alter||alter>=rentenbeginn){
     ['rr-steuersparn-m','rr-netto-m','rr-rente-m'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='–';});
     const h=document.getElementById('rr-hinweis-kap');if(h)h.innerHTML='Bitte Einkommen, Alter und Rentenbeginn eingeben.';
     if(detDiv)detDiv.style.display='none';
     return;
   }
-  // ── Steuerberechnung (ohne Reinvestition)
-  const absetzbar=Math.min(beitragJ,MAX_J);
+  // ── Steuerberechnung (ohne Reinvestition) – Deckel bereits bereinigt
+  const absetzbar=Math.min(beitragJ,deckel_verfuegbar);
   const pausch=1230;
   const zvEohne=Math.max(0,brutto-pausch);
   const zvEmit=Math.max(0,brutto-pausch-absetzbar);
@@ -1684,15 +1704,16 @@ function ruerupCalc(){
   const nmEl=document.getElementById('rr-netto-m');if(nmEl)nmEl.textContent=Math.round(nettoM).toLocaleString('de-DE')+' €';
   // ── Rentenberechnung Basis (3 % p.a. Anspar, 2,5 % p.a. Bezug über 20 J.)
   const n=rentenbeginn-alter;
-  const r=0.03;const rv=0.025/12;const nv=240;
+  const r=0.03;const rvRate=0.025/12;const nv=240;
   const kapital=beitragJ*((Math.pow(1+r,n)-1)/r)*(1+r);
-  const renteM=kapital*rv/(1-Math.pow(1+rv,-nv));
+  const renteM=kapital*rvRate/(1-Math.pow(1+rvRate,-nv));
   const rMR=Math.round(renteM);
   const rRA=document.getElementById('rr-renten-alter');if(rRA)rRA.textContent=rentenbeginn;
   const rRM=document.getElementById('rr-rente-m');if(rRM)rRM.textContent=rMR.toLocaleString('de-DE')+' €';
   const kapRnd=Math.round(kapital/1000)*1000;
   const h=document.getElementById('rr-hinweis-kap');
-  if(h)h.innerHTML=`Bei <b>${beitragM.toLocaleString('de-DE')} €/Mon.</b> × <b>${n} Jahre</b> Ansparzeit (3&nbsp;% p.a.) entsteht ein Kapital von ca. <b>${kapRnd.toLocaleString('de-DE')} €</b>. Das Finanzamt übernimmt über die gesamte Laufzeit ca. <b>${Math.round(steuerJ*n).toLocaleString('de-DE')} €</b> – Ihr effektiver Eigenanteil sinkt entsprechend.`;
+  const deckelHinweis=beitragJ>deckel_verfuegbar?` <span style="color:var(--rv-orange-400);font-weight:700">(steuerl. Deckel: ${Math.round(deckel_verfuegbar/12).toLocaleString('de-DE')} €/Mon.)</span>`:'';
+  if(h)h.innerHTML=`Bei <b>${beitragM.toLocaleString('de-DE')} €/Mon.</b>${deckelHinweis} × <b>${n} Jahre</b> Ansparzeit (3&nbsp;% p.a.) entsteht ein Kapital von ca. <b>${kapRnd.toLocaleString('de-DE')} €</b>. Das Finanzamt übernimmt über die gesamte Laufzeit ca. <b>${Math.round(steuerJ*n).toLocaleString('de-DE')} €</b> – Ihr effektiver Eigenanteil sinkt entsprechend.`;
   // ── Gesamtbilanz
   if(detDiv)detDiv.style.display='';
   const totalBrutto=Math.round(beitragJ*n);
@@ -1706,15 +1727,16 @@ function ruerupCalc(){
   const barE=document.getElementById('rr-bar-eigen');const barS=document.getElementById('rr-bar-staat');
   if(barE){barE.style.flexBasis=eigenPct+'%';barE.textContent=eigenPct+'% Sie';}
   if(barS){barS.style.flexBasis=staatPct+'%';barS.textContent=staatPct+'% Staat';}
-  // ── Reinvestitions-Berechnung (konvergente Formel)
+  // ── Reinvestitions-Berechnung (konvergente Formel, Deckel berücksichtigt)
   const rate=gstEff*kiSt;
+  const cap_rein=deckel_verfuegbar; // Reinvestition darf Deckel nicht überschreiten
   let beitragJ_rein,steuerJ_rein;
-  if(beitragJ/(1-rate)<=MAX_J){beitragJ_rein=beitragJ/(1-rate);steuerJ_rein=beitragJ_rein*rate;}
-  else{steuerJ_rein=MAX_J*rate;beitragJ_rein=beitragJ+steuerJ_rein;}
+  if(absetzbar/(1-rate)<=cap_rein){beitragJ_rein=absetzbar/(1-rate);steuerJ_rein=beitragJ_rein*rate;}
+  else{steuerJ_rein=cap_rein*rate;beitragJ_rein=absetzbar+steuerJ_rein;}
   const beitragM_rein=beitragJ_rein/12;
   const steuerM_rein=steuerJ_rein/12;
   const kapital_rein=beitragJ_rein*((Math.pow(1+r,n)-1)/r)*(1+r);
-  const renteM_rein=kapital_rein*rv/(1-Math.pow(1+rv,-nv));
+  const renteM_rein=kapital_rein*rvRate/(1-Math.pow(1+rvRate,-nv));
   // ── Meilensteine
   const mEl=document.getElementById('rr-meilensteine');
   if(mEl)mEl.innerHTML=buildMeilensteine(n,beitragJ,steuerJ,steuerJ_rein);
@@ -1767,6 +1789,47 @@ function ruerupCalc(){
 }
 
 /* ── Rürup-Hilfs­funktionen ── */
+function updateDeckelInfo(rvJ, abzuege, beitragJ, deckel_verfuegbar, MAX_J, status){
+  const div=document.getElementById('rr-deckel-info');if(!div)return;
+  const istAngestellt=status==='angestellt';
+  // Nur anzeigen wenn Angestellt ODER sonstige Abzüge ODER Überschreitung
+  if(!istAngestellt&&abzuege===0&&beitragJ<=deckel_verfuegbar){div.style.display='none';div.innerHTML='';return;}
+  div.style.display='';
+  const ruerupEff=Math.min(beitragJ,deckel_verfuegbar);
+  const ueberschreitung=Math.max(0,beitragJ-deckel_verfuegbar);
+  const frei=Math.max(0,MAX_J-rvJ-abzuege-ruerupEff);
+  const pct=v=>MAX_J>0?v/MAX_J*100:0;
+  // Balkensegment: nur rendern wenn breit genug für Text (>4%), sonst farbiger Streifen
+  const seg=(col,p,lbl)=>p<=0?'':p>5
+    ?`<div style="background:${col};flex-basis:${p.toFixed(1)}%;min-width:0;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:9px;font-weight:700;color:#fff;white-space:nowrap;padding:0 4px">${lbl}</div>`
+    :`<div style="background:${col};flex-basis:${p.toFixed(1)}%;min-width:2px;max-width:${p.toFixed(1)}%"></div>`;
+  const leg=(col,lbl,v)=>`<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap">
+    <span style="display:inline-block;width:9px;height:9px;background:${col};border-radius:2px;flex-shrink:0"></span>
+    <span style="color:var(--fg-muted)">${lbl}:</span> <b>${Math.round(v).toLocaleString('de-DE')} €</b></span>`;
+  const ueberschrWarn=ueberschreitung>0?`<div class="callout warn" style="margin-top:10px"><span class="ic">!</span><div>
+    <b>Höchstbetrag überschritten:</b> Der gewählte Rürup-Jahresbeitrag (<b>${Math.round(beitragJ).toLocaleString('de-DE')} €</b>) übersteigt den noch verfügbaren Deckel um <b>${Math.round(ueberschreitung).toLocaleString('de-DE')} €</b>.
+    Steuerlich absetzbar sind maximal <b>${Math.round(deckel_verfuegbar).toLocaleString('de-DE')} €/Jahr (${Math.round(deckel_verfuegbar/12).toLocaleString('de-DE')} €/Mon.)</b>.
+    Bitte Beitrag anpassen – der überschießende Teil erzeugt keine zusätzliche Steuerersparnis.</div></div>`:'';
+  div.innerHTML=`<div style="background:var(--rv-gray-100);border-radius:var(--radius-md);padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+      <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--rv-blue-900)">Rürup-Höchstbetrag 2026</span>
+      <span style="font-size:12px;font-weight:700;color:var(--rv-blue-900)">${MAX_J.toLocaleString('de-DE')} €/Jahr</span>
+    </div>
+    <div style="height:24px;border-radius:var(--radius-pill);overflow:hidden;display:flex;background:var(--rv-gray-200)">
+      ${seg('var(--rv-blue-900)',pct(rvJ),'GRV')}
+      ${abzuege>0?seg('#8B5E3C',pct(abzuege),'Weitere'):''}
+      ${seg('var(--rv-green-700)',pct(ruerupEff),'Rürup')}
+      ${seg('var(--rv-gray-200)',pct(frei),'')}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px">
+      ${istAngestellt?leg('var(--rv-blue-900)','GRV (AN+AG)',rvJ):''}
+      ${abzuege>0?leg('#8B5E3C','Weitere Vorsorge',abzuege):''}
+      ${leg('var(--rv-green-700)','Rürup',ruerupEff)}
+      ${frei>0?leg('var(--rv-gray-400,#bbb)','Noch verfügbar',frei):''}
+    </div>
+  </div>${ueberschrWarn}`;
+}
+
 function buildMeilensteine(n_total, beitragJ_base, steuerJ_base, steuerJ_rein){
   const raw=[1,3,5,10,15,n_total];
   const ms=[...new Set(raw.filter(y=>y>=1&&y<=n_total))].sort((a,b)=>a-b);
