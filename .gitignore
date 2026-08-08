@@ -46,6 +46,7 @@ ruvector.db
 .claude-flow/harness-active-policy.json
 .claude-flow/policy/
 .claude-flow/metrics/codebase-map.json
+.claude-flow/swarm/
 
 # Ruflo proven config (auto-generated)
 .claude/.proven-config-version
