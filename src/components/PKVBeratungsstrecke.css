@@ -1,0 +1,636 @@
+/* PKV Beratungsstrecke */
+.pkv-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1e293b;
+}
+
+/* Header */
+.pkv-header {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  border-radius: 12px 12px 0 0;
+  padding: 20px 28px;
+  color: white;
+}
+
+.pkv-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pkv-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pkv-logo-icon {
+  font-size: 2rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.pkv-logo-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.pkv-logo-sub {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.pkv-progress-info {
+  text-align: right;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.pkv-progress-bar {
+  width: 160px;
+  height: 6px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 99px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.pkv-progress-fill {
+  height: 100%;
+  background: #60a5fa;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+/* Step indicators */
+.pkv-steps {
+  display: flex;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  overflow-x: auto;
+  padding: 0 8px;
+}
+
+.pkv-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 18px;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  position: relative;
+  transition: color 0.2s;
+  min-width: 80px;
+}
+
+.pkv-step::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.pkv-step.active {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.pkv-step.active::after {
+  background: #1d4ed8;
+}
+
+.pkv-step.done {
+  color: #10b981;
+}
+
+.pkv-step-icon {
+  font-size: 1.3rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f1f5f9;
+  transition: all 0.2s;
+}
+
+.pkv-step.active .pkv-step-icon {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.pkv-step.done .pkv-step-icon {
+  background: #d1fae5;
+  color: #10b981;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Main layout */
+.pkv-main {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  min-height: 540px;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .pkv-main {
+    grid-template-columns: 1fr;
+  }
+  .pkv-sidebar {
+    display: none;
+  }
+}
+
+/* Chat area */
+.pkv-chat {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+
+.pkv-chat-messages {
+  flex: 1;
+  padding: 24px 20px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 320px;
+}
+
+/* Messages */
+.pkv-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 85%;
+}
+
+.pkv-msg--user {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.pkv-msg-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.pkv-msg-avatar--user {
+  background: linear-gradient(135deg, #64748b, #94a3b8);
+  font-size: 0.65rem;
+}
+
+.pkv-msg-bubble {
+  background: #f1f5f9;
+  border-radius: 0 12px 12px 12px;
+  padding: 10px 14px;
+}
+
+.pkv-msg--user .pkv-msg-bubble {
+  background: #dbeafe;
+  border-radius: 12px 0 12px 12px;
+}
+
+.pkv-msg-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin-bottom: 4px;
+}
+
+.pkv-msg-bubble p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #334155;
+}
+
+/* Typing indicator */
+.pkv-typing {
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 16px !important;
+}
+
+.pkv-typing span {
+  width: 8px;
+  height: 8px;
+  background: #94a3b8;
+  border-radius: 50%;
+  animation: pkv-bounce 1.2s infinite;
+  display: block;
+}
+
+.pkv-typing span:nth-child(2) { animation-delay: 0.15s; }
+.pkv-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes pkv-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Input area */
+.pkv-input-area {
+  padding: 16px 20px 20px;
+  border-top: 1px solid #f1f5f9;
+  background: #fafafa;
+}
+
+.pkv-input-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.pkv-input-label em {
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.pkv-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.pkv-text-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.pkv-text-input:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+/* Choices */
+.pkv-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.pkv-choice-grid--multi {
+  grid-template-columns: 1fr 1fr;
+}
+
+.pkv-choice-btn {
+  padding: 10px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  color: #334155;
+}
+
+.pkv-choice-btn:hover {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.pkv-choice-btn.selected {
+  border-color: #1d4ed8;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.pkv-check {
+  color: #1d4ed8;
+}
+
+/* Next button */
+.pkv-next-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px;
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pkv-next-btn:hover:not(:disabled) {
+  background: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+.pkv-next-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tarife */
+.pkv-tarife-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  .pkv-tarife-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pkv-tarif {
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  background: white;
+}
+
+.pkv-tarif:hover {
+  border-color: var(--tarif-color, #1d4ed8);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.pkv-tarif--highlight {
+  border-color: #2563eb;
+  background: #f0f6ff;
+}
+
+.pkv-tarif--selected {
+  border-color: var(--tarif-color, #1d4ed8);
+  background: #f0f6ff;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+}
+
+.pkv-tarif-badge {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2563eb;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.pkv-tarif-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.pkv-tarif-preis {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--tarif-color, #1d4ed8);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.pkv-tarif-preis span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.pkv-tarif-leistungen {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pkv-tarif-leistungen li {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.pkv-tarif-select-btn {
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.15s;
+}
+
+.pkv-tarif--selected .pkv-tarif-select-btn {
+  background: var(--tarif-color, #1d4ed8);
+  color: white;
+}
+
+/* Abschluss */
+.pkv-abschluss {
+  padding: 32px 28px;
+  text-align: center;
+  border-top: 1px solid #f1f5f9;
+}
+
+.pkv-abschluss-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.pkv-abschluss h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 10px 0;
+}
+
+.pkv-abschluss p {
+  font-size: 0.9rem;
+  color: #64748b;
+  max-width: 380px;
+  margin: 0 auto 20px;
+  line-height: 1.6;
+}
+
+.pkv-abschluss-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto 20px;
+}
+
+.pkv-abschluss-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.pkv-abschluss-item span {
+  font-size: 1.2rem;
+}
+
+.pkv-restart-btn {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1.5px solid #1d4ed8;
+  color: #1d4ed8;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pkv-restart-btn:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+/* Sidebar */
+.pkv-sidebar {
+  padding: 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pkv-sidebar-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #94a3b8;
+  margin: 8px 0 8px;
+}
+
+.pkv-sidebar-title:first-child {
+  margin-top: 0;
+}
+
+.pkv-sidebar-empty {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.pkv-sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9eef5;
+  gap: 8px;
+}
+
+.pkv-sidebar-item--col {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pkv-sidebar-key {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pkv-sidebar-val {
+  font-size: 0.82rem;
+  color: #1e293b;
+  font-weight: 600;
+  text-align: right;
+}
+
+.pkv-sidebar-val--highlight {
+  color: #1d4ed8;
+}
+
+.pkv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.pkv-tag {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 99px;
+  padding: 3px 9px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.pkv-sidebar-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 12px 0;
+}
+
+.pkv-sidebar-info {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0;
+}
