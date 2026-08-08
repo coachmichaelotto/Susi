@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import './SusiAgent.css';
 
@@ -7,115 +7,142 @@ const AGENT_ID = import.meta.env.VITE_AGENT_ID || 'agent_6001kmswk8etf5rrfknb32h
 function SusiAgent() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
+  const messagesEndRef = useRef(null);
 
   const conversation = useConversation({
     onConnect: () => {
-      console.log('Connected to Susi Agent');
-      setMessages(prev => [...prev, { type: 'system', text: 'Connected to Susi Agent' }]);
+      setMessages(prev => [...prev, { type: 'system', text: 'Verbunden mit Susi', ts: Date.now() }]);
     },
     onDisconnect: () => {
-      console.log('Disconnected from Susi Agent');
-      setMessages(prev => [...prev, { type: 'system', text: 'Disconnected from Susi Agent' }]);
+      setMessages(prev => [...prev, { type: 'system', text: 'Verbindung getrennt', ts: Date.now() }]);
     },
     onMessage: (message) => {
-      console.log('Message:', message);
       if (message.user_transcription_event) {
         setMessages(prev => [...prev, {
           type: 'user',
-          text: message.user_transcription_event.user_transcript
+          text: message.user_transcription_event.user_transcript,
+          ts: Date.now(),
         }]);
       }
       if (message.agent_response_event) {
         setMessages(prev => [...prev, {
           type: 'agent',
-          text: message.agent_response_event.agent_response
+          text: message.agent_response_event.agent_response,
+          ts: Date.now(),
         }]);
       }
     },
     onError: (error) => {
-      console.error('Error:', error);
-      setMessages(prev => [...prev, { type: 'error', text: `Error: ${error.message}` }]);
-    },
-    onModeChange: (mode) => {
-      console.log('Mode:', mode);
+      setMessages(prev => [...prev, { type: 'error', text: error.message, ts: Date.now() }]);
     },
   });
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const startConversation = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      await conversation.startSession({
-        agentId: AGENT_ID,
-        connectionType: 'webrtc', // Low latency
-      });
-    } catch (error) {
-      console.error('Failed to start conversation:', error);
-      setMessages(prev => [...prev, { type: 'error', text: 'Failed to start conversation' }]);
+      await conversation.startSession({ agentId: AGENT_ID, connectionType: 'webrtc' });
+    } catch {
+      setMessages(prev => [...prev, { type: 'error', text: 'Mikrofon-Zugriff verweigert', ts: Date.now() }]);
     }
   };
 
   const sendMessage = async () => {
-    if (userInput.trim()) {
-      conversation.sendUserMessage(userInput);
-      setMessages(prev => [...prev, { type: 'user', text: userInput }]);
-      setUserInput('');
-    }
+    const text = userInput.trim();
+    if (!text) return;
+    conversation.sendUserMessage(text);
+    setMessages(prev => [...prev, { type: 'user', text, ts: Date.now() }]);
+    setUserInput('');
   };
 
+  const isConnected = conversation.status === 'connected';
+  const isSpeaking = conversation.isSpeaking;
+
+  const formatTime = (ts) =>
+    new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
   return (
-    <div className="agent-container">
-      <div className="conversation-box">
-        <div className="messages">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`message ${msg.type}`}>
-              <span className="badge">{msg.type}</span>
-              <p>{msg.text}</p>
-            </div>
-          ))}
-        </div>
+    <div className="susi-container">
+
+      <div className="susi-status-bar">
+        <div className={`status-dot ${isConnected ? (isSpeaking ? 'speaking' : 'listening') : 'offline'}`} />
+        <span className="status-label">
+          {!isConnected && 'Nicht verbunden'}
+          {isConnected && isSpeaking && 'Susi spricht …'}
+          {isConnected && !isSpeaking && 'Hört zu …'}
+        </span>
+        {isConnected && isSpeaking && (
+          <div className="sound-wave">
+            <span /><span /><span /><span /><span />
+          </div>
+        )}
       </div>
 
-      <div className="controls">
-        <div className="status">
-          <p>Status: <strong>{conversation.status}</strong></p>
-          <p>Agent is {conversation.isSpeaking ? '🔊 Speaking' : '👂 Listening'}</p>
-        </div>
+      <div className="susi-messages">
+        {messages.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-icon">🎙️</div>
+            <p>Starte ein Gespräch mit Susi</p>
+            <p className="empty-hint">Klicke auf „Gespräch starten" und sprich einfach los.</p>
+          </div>
+        )}
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`bubble-row ${msg.type}`}>
+            {msg.type === 'agent' && <div className="avatar agent-avatar">S</div>}
+            <div className="bubble">
+              <p>{msg.text}</p>
+              <span className="bubble-time">{formatTime(msg.ts)}</span>
+            </div>
+            {msg.type === 'user' && <div className="avatar user-avatar">Du</div>}
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
 
-        <div className="button-group">
+      <div className="susi-controls">
+        <div className="action-buttons">
           <button
             onClick={startConversation}
-            disabled={conversation.status === 'connected'}
-            className="btn btn-primary"
+            disabled={isConnected}
+            className="btn btn-start"
+            title="Gespräch starten"
           >
-            Start Conversation
+            <span className="btn-icon">🎙️</span>
+            Gespräch starten
           </button>
           <button
             onClick={() => conversation.endSession()}
-            disabled={conversation.status !== 'connected'}
-            className="btn btn-danger"
+            disabled={!isConnected}
+            className="btn btn-stop"
+            title="Gespräch beenden"
           >
-            Stop Conversation
+            <span className="btn-icon">⏹</span>
+            Beenden
           </button>
         </div>
 
-        <div className="input-group">
+        <div className="text-input-row">
           <input
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type a message..."
-            disabled={conversation.status !== 'connected'}
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Nachricht eingeben …"
+            disabled={!isConnected}
           />
           <button
             onClick={sendMessage}
-            disabled={conversation.status !== 'connected'}
-            className="btn btn-secondary"
+            disabled={!isConnected || !userInput.trim()}
+            className="btn btn-send"
           >
-            Send
+            Senden
           </button>
         </div>
       </div>
+
     </div>
   );
 }
