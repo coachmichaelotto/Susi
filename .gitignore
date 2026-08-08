@@ -35,3 +35,7 @@ yarn-error.log*
 .claude-flow/data/
 .claude-flow/logs/
 .claude-flow/sessions/
+
+# Ruflo runtime databases
+.swarm/
+ruvector.db
