@@ -39,3 +39,14 @@ yarn-error.log*
 # Ruflo runtime databases
 .swarm/
 ruvector.db
+
+# Ruflo daemon runtime state
+.claude-flow/daemon.pid
+.claude-flow/daemon-state.json
+.claude-flow/harness-active-policy.json
+.claude-flow/policy/
+.claude-flow/metrics/codebase-map.json
+
+# Ruflo proven config (auto-generated)
+.claude/.proven-config-version
+.claude/proven-config.json
