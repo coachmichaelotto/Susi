@@ -252,12 +252,29 @@ table.cmp td.rowlbl{font-weight:700;background:var(--rv-gray-100)}
     <!-- STEP 0 · Start -->
     <section class="step on" data-step="0">
       <div class="start">
-        <div class="kick">R+V · Du bist nicht allein.</div>
-        <h1>PKV + Rürup – <span class="hl">die smarte Kombination</span> für Ihre Gesundheitsabsicherung.</h1>
-        <p>Diese geführte Strecke begleitet Sie durch das vollständige Beratungsgespräch: Nach dem Fakten-Check zur PKV und der Angebotsdatenerfassung zeigt der neue <b>Rürup-Brücken-Rechner</b>, wie eine Rürup-Rente durch Steuerersparnis den künftigen PKV-Beitrag finanziert.</p>
+        <div class="kick">R+V GesundheitsKonzept AGIL · Beratungsgespräch</div>
+        <h1>Im Alter steigt der PKV-Beitrag. <span class="hl">Die Rürup-Rente kann ihn ersetzen.</span></h1>
+        <p>Gute PKV-Absicherung kostet im Ruhestand <b>600–1.200 €/Monat</b>. Wer jetzt eine VR-RürupRente startet, lässt das Finanzamt bis zu <b>42 % der Beiträge</b> übernehmen – und baut genau das Kapital auf, das später die PKV-Kosten deckt. Diese Strecke führt durch das vollständige Gespräch und zeigt am Ende die <b>persönliche Deckungsquote</b>.</p>
+        <div style="background:var(--rv-blue-900);border-radius:14px;padding:22px 24px;margin:22px 0">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rv-green-400);margin-bottom:14px">Was Ihr Kunde heute erfährt</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+            <div style="text-align:center">
+              <div style="font-size:32px;font-weight:900;color:var(--rv-green-400);line-height:1">bis 42 %</div>
+              <div style="font-size:11px;color:#9fb0d6;margin-top:4px">Steuerersparnis auf Rürup-Beiträge (Grenzsteuersatz)</div>
+            </div>
+            <div style="text-align:center;border-left:1px solid rgba(255,255,255,.12);border-right:1px solid rgba(255,255,255,.12)">
+              <div style="font-size:32px;font-weight:900;color:var(--rv-green-400);line-height:1">6 % p.a.</div>
+              <div style="font-size:11px;color:#9fb0d6;margin-top:4px">R+V-Hochrechnung Policenwert (Tarif FA, UniESG)</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:32px;font-weight:900;color:var(--rv-green-400);line-height:1">≥ 100 %</div>
+              <div style="font-size:11px;color:#9fb0d6;margin-top:4px">PKV-Deckungsquote ist das Beratungsziel</div>
+            </div>
+          </div>
+        </div>
         <div class="flow">
           <div class="f"><b>1</b>Fakten-Check</div>
-          <div class="f"><b>2</b>Ausgangssituation</div>
+          <div class="f"><b>2</b>Situation</div>
           <div class="f"><b>3</b>Person</div>
           <div class="f"><b>4</b>Familie</div>
           <div class="f"><b>5</b>Tarif &amp; SB</div>
@@ -266,7 +283,8 @@ table.cmp td.rowlbl{font-weight:700;background:var(--rv-gray-100)}
           <div class="f"><b>8</b>Rürup-Brücke</div>
           <div class="f"><b>9</b>Angebotsdaten</div>
         </div>
-        <button class="btn btn-next" onclick="go(1)">Beratung starten →</button>
+        <button class="btn btn-next" onclick="go(1)" style="font-size:15px;padding:14px 36px;width:100%;margin-top:8px">Beratung starten →</button>
+        <div style="margin-top:12px;font-size:11px;color:var(--fg-muted);text-align:center">ca. 20–30 Minuten · Alle Eingaben bleiben lokal in Ihrem Browser</div>
       </div>
       <p class="footer-note">Arbeitshilfe für das Beraterinnen- und Beratergespräch. Alle Eingaben bleiben lokal in diesem Browser (localStorage) und werden nicht übertragen. Maßgeblich sind die Allgemeinen Versicherungsbedingungen sowie das verbindliche R+V-Angebot.</p>
     </section>
@@ -275,14 +293,11 @@ table.cmp td.rowlbl{font-weight:700;background:var(--rv-gray-100)}
     <section class="step" data-step="1">
       <div class="step-head">
         <span class="eyebrow">Schritt 1 · Fakten-Check</span>
-        <h1>Wissen, wer einem den Rücken stärkt.</h1>
-        <p class="lead">Zur privaten Kranken-Vollversicherung gibt es viele Vorurteile. Gehen Sie die sechs häufigsten gemeinsam mit Ihrer Kundin oder Ihrem Kunden durch und haken Sie jeden besprochenen Punkt ab.</p>
+        <h1>Die 6 häufigsten Irrtümer – und die Wahrheit dahinter.</h1>
+        <p class="lead">Fast jeder Interessent bringt Vorbehalte mit. Klären Sie diese jetzt gemeinsam – Punkt für Punkt – bevor ein Missverständnis den Abschluss verhindert.</p>
       </div>
       <div id="myths"></div>
-      <div class="callout ok" style="margin-top:8px">
-        <span class="ic">✓</span>
-        <div><b>Besprochene Punkte:</b> <span id="myth-count">0 von 6</span>. Sind die wichtigsten Bedenken geklärt, geht es weiter zur Ausgangssituation.</div>
-      </div>
+      <div id="myth-progress-bar" style="margin-top:12px"></div>
     </section>
 
     <!-- STEP 2 · Ausgangssituation -->
@@ -813,8 +828,8 @@ table.cmp td.rowlbl{font-weight:700;background:var(--rv-gray-100)}
     <section class="step" data-step="9">
       <div class="hero-close">
         <div>
-          <div class="kick">Schritt 8 · Angebotsdaten</div>
-          <div class="serif">Alles beisammen für Ihr AGIL-Angebot.</div>
+          <div class="kick">Schritt 9 · Angebotsdaten</div>
+          <div class="serif">Alles bereit – jetzt das AGIL-Angebot erstellen.</div>
         </div>
         <div class="export-row">
           <button class="btn btn-primary" onclick="exportPDF()">⭳ PDF-Export (komplett)</button>
@@ -1302,7 +1317,10 @@ function go(n,silent){
   refreshRail();
   document.getElementById('btn-prev').style.visibility=n===0?'hidden':'visible';
   const bn=document.getElementById('btn-next');
-  bn.textContent = n===STEPS.length-1 ? 'Fertig' : 'Weiter →';
+  if(n===STEPS.length-1) bn.textContent='Fertig';
+  else if(n===7) bn.textContent='Zur Rürup-Brücke →';
+  else if(n===8) bn.textContent='Angebotsdaten erfassen →';
+  else bn.textContent='Weiter →';
   bn.style.visibility = n===STEPS.length-1 ? 'hidden':'visible';
   document.getElementById('prog').textContent = n===0? '' : `Schritt ${n} von ${STEPS.length-1} · ${STEPS[n]}`;
   if(n===8)ruerupAutoFill();
@@ -1341,7 +1359,28 @@ function checkMyth(i){
 }
 function mythCount(){
   const c=Object.values(state.myths).filter(Boolean).length;
-  document.getElementById('myth-count').textContent=`${c} von 6`;
+  const pct=Math.round(c/6*100);
+  const bar=document.getElementById('myth-progress-bar');
+  if(!bar)return;
+  const msgs=[
+    ['var(--rv-gray-300)','0 von 6 besprochen – klicken Sie die Irrtümer durch, die Ihr Kunde mitbringt.'],
+    ['#e0a800','1 von 6 – guter Start! Weiter so.'],
+    ['#e0a800','2 von 6 – die wichtigen Vorbehalte klären sich.'],
+    ['#d97706','3 von 6 – Halbzeit! Ihr Kunde versteht die PKV-Vorteile besser.'],
+    ['#d97706','4 von 6 – fast alle Bedenken ausgeräumt.'],
+    ['var(--rv-green-700)','5 von 6 – noch eine Hürde!'],
+    ['var(--rv-green-700)','Alle 6 Irrtümer besprochen ✓ – Ihr Kunde ist jetzt informiert. Weiter zur Situation.'],
+  ];
+  const [col,msg]=msgs[c];
+  const ctaHtml=c>=4?`<button class="btn btn-next" onclick="go(2)" style="margin-top:10px;width:100%">Weiter zur Ausgangssituation →</button>`:'';
+  bar.innerHTML=`<div style="background:var(--rv-gray-100);border-radius:var(--radius-md);padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--rv-blue-900)">
+      <span>Besprochene Irrtümer</span><span style="color:${col}">${c} / 6</span></div>
+    <div style="height:8px;background:var(--rv-gray-200);border-radius:4px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${col};border-radius:4px;transition:width .4s ease"></div></div>
+    <div style="font-size:12px;color:var(--fg-muted);margin-top:8px">${msg}</div>
+    ${ctaHtml}
+  </div>`;
 }
 
 /* ============ Optsets ============ */
@@ -1469,6 +1508,27 @@ function collect(){
 function renderSummary(){
   const c=collect();
   const status=state.opts['status-set']||'';
+  // Rürup hero metrics – read live values set by ruerupCalc()
+  const _rMon=val('ruerup-beitrag-final');
+  const _pkvZiel=val('pkv-beitrag-ziel');
+  const _renteEl=document.getElementById('rr-rente-m');
+  const _renteText=_renteEl?_renteEl.textContent.trim():'';
+  const _renteAlterEl=document.getElementById('rr-renten-alter');
+  const _renteAlter=_renteAlterEl?_renteAlterEl.textContent.trim():'';
+  const _steuerEl=document.getElementById('rr-steuersparn-m');
+  const _steuerText=_steuerEl?_steuerEl.textContent.replace('−','').trim():'';
+  const _nettoEl=document.getElementById('rr-netto-m');
+  const _nettoText=_nettoEl?_nettoEl.textContent.trim():'';
+  const heroBlock=(_rMon||_renteText)?`<div style="background:var(--rv-blue-900);color:#fff;border-radius:var(--radius-lg);padding:22px 26px;margin-bottom:20px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:.1em;opacity:.65;text-transform:uppercase;margin-bottom:14px">Rürup-Brücke · Ihr Ergebnis auf einen Blick</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end">
+      ${_rMon?`<div><div style="font-size:11px;opacity:.65;margin-bottom:2px">Beitrag / Monat</div><div style="font-size:26px;font-weight:800;line-height:1">${Number(_rMon).toLocaleString('de-DE')} €</div></div>`:''}
+      ${_steuerText?`<div><div style="font-size:11px;opacity:.65;margin-bottom:2px">Steuerersparnis / Monat</div><div style="font-size:26px;font-weight:800;line-height:1;color:#A7D54C">−${_steuerText}</div></div>`:''}
+      ${_nettoText?`<div><div style="font-size:11px;opacity:.65;margin-bottom:2px">Ihr Nettoaufwand</div><div style="font-size:26px;font-weight:800;line-height:1">${_nettoText}</div></div>`:''}
+      ${_renteText?`<div style="margin-left:auto;text-align:right"><div style="font-size:11px;opacity:.65;margin-bottom:2px">Hochger. Monatsrente${_renteAlter?' ab '+_renteAlter:''}</div><div style="font-size:26px;font-weight:800;line-height:1;color:#A7D54C">${_renteText}/Mon.</div></div>`:''}
+    </div>
+    ${(_pkvZiel&&_nettoText)?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);font-size:12px;opacity:.8">PKV-Zielbeitrag ${Number(_pkvZiel).toLocaleString('de-DE')} €/Mon. · Der Nettoaufwand ${_nettoText} bleibt auch im Alter durch die Rürup-Rente gedeckt.</div>`:''}
+  </div>`:'';
   const sc=state.riskKI?kiToRes(state.riskKI):scoreRisk();
   const jaList=RISK_Q.filter(q=>state.risk[q.id]==='ja').map(q=>qLabel(q.id));
   const ampMap={gruen:'grün · Annahme normal',gelb:'gelb · Erschwernis/Zuschlag',orange:'orange · Risikovoranfrage empfohlen',rot:'rot · kritisch / Ablehnungsdiagnose'};
@@ -1478,7 +1538,7 @@ function renderSummary(){
   if(chk('ppv'))bausteine.push('Pflegepflichtversicherung');
   if(chk('bek-an'))bausteine.push('Beitragsentlastung im Alter'+(val('bek-betrag')?' ('+val('bek-betrag')+' €/Mon.)':''));
 
-  const html=`
+  const html=heroBlock+`
    <div class="sum-block">
      <h3>Person <button class="edit" onclick="go(3)">bearbeiten</button></h3>
      <div class="sum-rows">
@@ -1827,7 +1887,13 @@ function ruerupCalc(){
       <div style="background:var(--rv-blue-900);border-radius:var(--radius-md);padding:14px;text-align:center">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rv-green-400);letter-spacing:.06em">PKV gedeckt</div>
         <div style="font-size:20px;font-weight:900;color:#fff;margin-top:4px">${deckPct} %</div>
-        <div style="font-size:10px;color:#9fb0d6">der Kosten im Ruhestand</div></div></div>`;
+        <div style="font-size:10px;color:#9fb0d6">der Kosten im Ruhestand</div></div></div>
+    <div style="margin-top:18px;border:2px solid var(--rv-green-700);border-radius:var(--radius-md);padding:18px 20px;background:var(--rv-cream,#fff8ee)">
+      <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--rv-green-700);margin-bottom:6px">Nächster Schritt</div>
+      <div style="font-size:14px;font-weight:700;color:var(--rv-blue-900);margin-bottom:4px">Angebot jetzt für 2026 sichern</div>
+      <div style="font-size:12px;color:var(--fg-muted);margin-bottom:14px">Rürup-Beiträge sind bis zum Steuerbescheid 2026 voll absetzbar (${Math.round(Math.min(beitragJ,deckel_verfuegbar)).toLocaleString('de-DE')} €/Jahr → ${Math.round(steuerJ).toLocaleString('de-DE')} € Steuererstattung bereits im ersten Jahr). Geben Sie jetzt die Angebotsdaten ein.</div>
+      <button class="btn btn-next" onclick="go(9)" style="width:100%;font-size:14px;padding:13px">Angebotsdaten erfassen →</button>
+    </div>`;
   save();
 }
 
