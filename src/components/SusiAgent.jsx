@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import './SusiAgent.css';
 
-const AGENT_ID = import.meta.env.VITE_AGENT_ID || 'agent_6001kmswk8etf5rrfknb32hamt1k';
+const AGENT_ID = import.meta.env.VITE_AGENT_ID || 'agent_7101kzrw6qz0egns22n7nsz60dt7';
 
 function SusiAgent() {
   const [messages, setMessages] = useState([]);
