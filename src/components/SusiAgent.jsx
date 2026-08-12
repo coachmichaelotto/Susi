@@ -1,43 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import './SusiAgent.css';
 
-const AGENT_ID = import.meta.env.VITE_AGENT_ID || 'agent_6001kmswk8etf5rrfknb32hamt1k';
+const VACATION_AGENT_ID = import.meta.env.VITE_VACATION_AGENT_ID || 'agent_2101kzttd6y0fd0agf02sx7a4czc';
+
+const VACATION_START = new Date('2026-08-14');
+const VACATION_END = new Date('2026-09-07');
+const RETURN_DATE = '8. September 2026';
+
+function isInVacation() {
+  const now = new Date();
+  return now >= VACATION_START && now <= VACATION_END;
+}
 
 function SusiAgent() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
+  const [bookedAppointments, setBookedAppointments] = useState([]);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const conversation = useConversation({
     onConnect: () => {
-      console.log('Connected to Susi Agent');
-      setMessages(prev => [...prev, { type: 'system', text: 'Connected to Susi Agent' }]);
+      setMessages(prev => [...prev, {
+        type: 'system',
+        text: 'Verbunden mit Susi Urlaubsvertretung'
+      }]);
     },
     onDisconnect: () => {
-      console.log('Disconnected from Susi Agent');
-      setMessages(prev => [...prev, { type: 'system', text: 'Disconnected from Susi Agent' }]);
+      setMessages(prev => [...prev, {
+        type: 'system',
+        text: 'Gespräch beendet'
+      }]);
     },
     onMessage: (message) => {
-      console.log('Message:', message);
       if (message.user_transcription_event) {
         setMessages(prev => [...prev, {
           type: 'user',
           text: message.user_transcription_event.user_transcript
         }]);
+        scrollToBottom();
       }
       if (message.agent_response_event) {
         setMessages(prev => [...prev, {
           type: 'agent',
           text: message.agent_response_event.agent_response
         }]);
+        scrollToBottom();
+      }
+      if (message.agent_tool_response) {
+        const tool = message.agent_tool_response;
+        if (tool.tool_name === 'book_appointment' && tool.response) {
+          try {
+            const result = JSON.parse(tool.response);
+            if (result.success || result.status === 'booked') {
+              setBookedAppointments(prev => [...prev, {
+                name: result.customer_name || '',
+                datetime: result.datetime || result.slot || '',
+                concern: result.concern || '',
+                timestamp: new Date().toLocaleString('de-DE')
+              }]);
+            }
+          } catch {
+            // Tool-Antwort kein JSON — ignorieren
+          }
+        }
       }
     },
     onError: (error) => {
-      console.error('Error:', error);
-      setMessages(prev => [...prev, { type: 'error', text: `Error: ${error.message}` }]);
-    },
-    onModeChange: (mode) => {
-      console.log('Mode:', mode);
+      setMessages(prev => [...prev, {
+        type: 'error',
+        text: `Fehler: ${error.message}`
+      }]);
     },
   });
 
@@ -45,77 +82,132 @@ function SusiAgent() {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       await conversation.startSession({
-        agentId: AGENT_ID,
-        connectionType: 'webrtc', // Low latency
+        agentId: VACATION_AGENT_ID,
+        connectionType: 'webrtc',
       });
     } catch (error) {
-      console.error('Failed to start conversation:', error);
-      setMessages(prev => [...prev, { type: 'error', text: 'Failed to start conversation' }]);
+      setMessages(prev => [...prev, {
+        type: 'error',
+        text: 'Mikrofon-Zugriff verweigert oder Verbindungsfehler.'
+      }]);
     }
   };
 
-  const sendMessage = async () => {
-    if (userInput.trim()) {
+  const sendMessage = () => {
+    if (userInput.trim() && conversation.status === 'connected') {
       conversation.sendUserMessage(userInput);
-      setMessages(prev => [...prev, { type: 'user', text: userInput }]);
       setUserInput('');
     }
   };
 
+  const daysUntilReturn = Math.max(
+    0,
+    Math.ceil((VACATION_END - new Date()) / (1000 * 60 * 60 * 24))
+  );
+
   return (
     <div className="agent-container">
+
+      <div className="vacation-banner">
+        <div className="vacation-icon">🌴</div>
+        <div className="vacation-info">
+          <strong>Michael Otto ist im Urlaub</strong>
+          <span>14. August – 7. September 2026</span>
+          {isInVacation() && daysUntilReturn > 0 && (
+            <span className="return-info">Rückkehr in {daysUntilReturn} Tagen · ab {RETURN_DATE}</span>
+          )}
+        </div>
+        <div className="agent-badge">
+          <span>Susi</span>
+          <span className="agent-badge-sub">Urlaubsvertretung</span>
+        </div>
+      </div>
+
       <div className="conversation-box">
         <div className="messages">
+          {messages.length === 0 && (
+            <div className="empty-state">
+              Gespräch starten, um Anrufe entgegenzunehmen
+            </div>
+          )}
           {messages.map((msg, idx) => (
             <div key={idx} className={`message ${msg.type}`}>
-              <span className="badge">{msg.type}</span>
+              <span className="badge">
+                {msg.type === 'user' ? 'Anrufer' :
+                 msg.type === 'agent' ? 'Susi' :
+                 msg.type === 'error' ? 'Fehler' : 'System'}
+              </span>
               <p>{msg.text}</p>
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
       <div className="controls">
         <div className="status">
-          <p>Status: <strong>{conversation.status}</strong></p>
-          <p>Agent is {conversation.isSpeaking ? '🔊 Speaking' : '👂 Listening'}</p>
+          <div className="status-row">
+            <span>Status:</span>
+            <strong className={`status-value ${conversation.status}`}>
+              {conversation.status === 'connected' ? 'Verbunden' :
+               conversation.status === 'connecting' ? 'Verbindet…' : 'Getrennt'}
+            </strong>
+          </div>
+          {conversation.status === 'connected' && (
+            <div className="status-row">
+              <span>Susi:</span>
+              <strong>{conversation.isSpeaking ? '🔊 Spricht' : '👂 Hört zu'}</strong>
+            </div>
+          )}
         </div>
 
         <div className="button-group">
           <button
             onClick={startConversation}
-            disabled={conversation.status === 'connected'}
+            disabled={conversation.status === 'connected' || conversation.status === 'connecting'}
             className="btn btn-primary"
           >
-            Start Conversation
+            Gespräch starten
           </button>
           <button
             onClick={() => conversation.endSession()}
             disabled={conversation.status !== 'connected'}
             className="btn btn-danger"
           >
-            Stop Conversation
+            Gespräch beenden
           </button>
         </div>
 
-        <div className="input-group">
-          <input
-            type="text"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type a message..."
-            disabled={conversation.status !== 'connected'}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={conversation.status !== 'connected'}
-            className="btn btn-secondary"
-          >
-            Send
-          </button>
-        </div>
+        {conversation.status === 'connected' && (
+          <div className="input-group">
+            <input
+              type="text"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Testnachricht eingeben…"
+            />
+            <button onClick={sendMessage} className="btn btn-secondary">
+              Senden
+            </button>
+          </div>
+        )}
       </div>
+
+      {bookedAppointments.length > 0 && (
+        <div className="appointments-box">
+          <h3>Gebuchte Rückruftermine</h3>
+          {bookedAppointments.map((apt, idx) => (
+            <div key={idx} className="appointment-item">
+              <strong>{apt.name}</strong>
+              <span>{apt.datetime}</span>
+              {apt.concern && <span className="concern">{apt.concern}</span>}
+              <span className="timestamp">Gebucht: {apt.timestamp}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
     </div>
   );
 }

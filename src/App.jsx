@@ -6,8 +6,8 @@ function App() {
   return (
     <div className="app">
       <header>
-        <h1>Susi - ElevenLabs Conversational AI</h1>
-        <p>Agent: Susi Bestandskunden</p>
+        <h1>Susi – Urlaubsvertretung</h1>
+        <p>Michael Otto · R+V Versicherung · Berliner Volksbank</p>
       </header>
       <main>
         <SusiAgent />
