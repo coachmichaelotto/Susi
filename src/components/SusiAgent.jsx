@@ -4,15 +4,6 @@ import './SusiAgent.css';
 
 const VACATION_AGENT_ID = import.meta.env.VITE_VACATION_AGENT_ID || 'agent_2101kzttd6y0fd0agf02sx7a4czc';
 
-const VACATION_START = new Date('2026-08-14');
-const VACATION_END = new Date('2026-09-07');
-const RETURN_DATE = '8. September 2026';
-
-function isInVacation() {
-  const now = new Date();
-  return now >= VACATION_START && now <= VACATION_END;
-}
-
 function SusiAgent() {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -100,26 +91,18 @@ function SusiAgent() {
     }
   };
 
-  const daysUntilReturn = Math.max(
-    0,
-    Math.ceil((VACATION_END - new Date()) / (1000 * 60 * 60 * 24))
-  );
-
   return (
     <div className="agent-container">
 
       <div className="vacation-banner">
-        <div className="vacation-icon">🌴</div>
+        <div className="vacation-icon">🤖</div>
         <div className="vacation-info">
-          <strong>Michael Otto ist im Urlaub</strong>
-          <span>14. August – 7. September 2026</span>
-          {isInVacation() && daysUntilReturn > 0 && (
-            <span className="return-info">Rückkehr in {daysUntilReturn} Tagen · ab {RETURN_DATE}</span>
-          )}
+          <strong>Susi – Digitale Assistentin</strong>
+          <span>Nimmt Anliegen auf · vereinbart Termine · informiert Michael Otto per E-Mail</span>
         </div>
         <div className="agent-badge">
           <span>Susi</span>
-          <span className="agent-badge-sub">Urlaubsvertretung</span>
+          <span className="agent-badge-sub">KI-Assistentin</span>
         </div>
       </div>
 
@@ -127,7 +110,7 @@ function SusiAgent() {
         <div className="messages">
           {messages.length === 0 && (
             <div className="empty-state">
-              Gespräch starten, um Anrufe entgegenzunehmen
+              Gespräch starten, um Anliegen aufzunehmen
             </div>
           )}
           {messages.map((msg, idx) => (
@@ -196,7 +179,7 @@ function SusiAgent() {
 
       {bookedAppointments.length > 0 && (
         <div className="appointments-box">
-          <h3>Gebuchte Rückruftermine</h3>
+          <h3>Gebuchte Termine & Rückrufe</h3>
           {bookedAppointments.map((apt, idx) => (
             <div key={idx} className="appointment-item">
               <strong>{apt.name}</strong>

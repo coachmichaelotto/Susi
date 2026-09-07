@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="app">
       <header>
-        <h1>Susi – Urlaubsvertretung</h1>
+        <h1>Susi – Digitale Assistentin</h1>
         <p>Michael Otto · R+V Versicherung · Berliner Volksbank</p>
       </header>
       <main>
